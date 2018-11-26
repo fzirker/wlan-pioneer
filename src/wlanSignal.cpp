@@ -3,77 +3,71 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
+#include <linux/wireless.h>
+#include <sys/types.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <cstring>
 
 using namespace std;
 using namespace ros;
 using namespace wlan_pioneer;
 
-string GetStdoutFromCommand(const string &cmd)
-{
-   string data;
-   FILE *stream;
-   const int max_buffer = 256;
-   char buffer[max_buffer];
-   //cmd.append(" 2>&1");
 
-   stream = popen(cmd.c_str(), "r");
-   if (stream)
-   {
-      while (!feof(stream))
-      {
-         if (fgets(buffer, max_buffer, stream) != NULL)
-         {
-            data.append(buffer);
-         }
-      }
-      pclose(stream);
+int64_t getWlanSignalStrength(const string &interface) {
+   int sockfd;
+   struct iw_statistics stats;
+   struct iwreq req;
+   memset(&stats, 0, sizeof(stats));
+   memset(&req, 0, sizeof(iwreq));
+   strncpy(req.ifr_name, interface.c_str(), 16);
+   req.u.data.pointer = &stats;
+   req.u.data.length = sizeof(iw_statistics);
+#ifdef CLEAR_UPDATED
+   req.u.data.flags = 1;
+#endif
+
+   if((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
+      ROS_ERROR("Could not create simple datagram socket");
+      exit(EXIT_FAILURE);
    }
-   return data;
+   if(ioctl(sockfd, SIOCGIWSTATS, &req) == -1) {
+      ROS_ERROR("Error performing SIOCGIWSTATS");
+      close(sockfd);
+      exit(EXIT_FAILURE);
+   }
+   close(sockfd);
+   return (int8_t)stats.qual.level;
 }
 
-int64_t getWlanSignalStrength(const string &interface)
-{
-   stringstream command;
-   command << "iwconfig " << interface << " | grep Signal "
-           << "| cut -d \"=\" -f3 "
-           << "| cut -d \" \" -f1";
-   return stol(GetStdoutFromCommand(command.str()));
-}
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
    init(argc, argv, "wlanSignal");
    NodeHandle node;
    string wlanInterface24G;
    string wlanInterface5G;
 
-   if (node.param<string>("wlan_interface_24G", wlanInterface24G, "wlan0"))
-   {
-      ROS_INFO("Param wlan_interface_24: %s", wlanInterface24G.c_str());
+   if (node.param<string>("wlan_interface_24G", wlanInterface24G, "wlan0")) {
+      ROS_INFO("Param wlan_interface_24G: %s", wlanInterface24G.c_str());
    }
-   else
-   {
-      ROS_INFO("Param 'wlan_interface_24' not set. Using 'wlan0'");
+   else {
+      ROS_INFO("Param 'wlan_interface_24G' not set. Using 'wlan0'");
    }
 
-   if (node.param<string>("wlan_interface_5G", wlanInterface5G, "wlan0"))
-   {
+   if (node.param<string>("wlan_interface_5G", wlanInterface5G, "wlan0")) {
       ROS_INFO("Param wlan_interface_5G: %s", wlanInterface5G.c_str());
    }
-   else
-   {
+   else {
       ROS_INFO("Param 'wlan_interface_5G' not set. Using 'wlan0'");
    }
 
    // topic: wlan_signal
    Publisher publisher = node.advertise<WlanSignalMsg>("wlan_signal", 1000);
-
    Rate loopRate(1); // every second
 
-   while (ros::ok())
-   {
+   while (ok()) {
       WlanSignalMsg msg;
-      msg.timestamp = ros::Time::now();
+      msg.timestamp = Time::now();
       msg.level_24G = getWlanSignalStrength(wlanInterface24G);
       msg.level_5G = getWlanSignalStrength(wlanInterface5G);
 
