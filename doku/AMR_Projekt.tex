@@ -61,6 +61,21 @@ Mögliche Anzeigen pro Punkt: Neustes Signal, Stärkstes, Schwächstes, Durchsch
 
 dBm: Logarithmische Skala, misst die Signalstärke in Watt(?). Werte < 0 bedeuten Signalstärken < 1.
 
+\subsection{Rosbag}
+\begin{itemize}
+	\item Ordner anlegen, in dem die Datei gespeichert werden soll
+	\item Roboter und alle benötigten topics starten
+	\item in den Ordner navigieren, der oben angelegt wurde
+	\item rosbag record -O subset *hier Topics durch Leerzeichen getrennt angeben* (Kann subset umbenannt werden?)
+	\item Aufzeichnung durch ctrl+c beenden
+\end{itemize}
+Topics: /pose, /joy, /scan
+
+später kommt noch das wlansignal dazu, erstmal diese 3.
+/joy sollte nicht mit aufgezeichnet werden. Bei rosbag play fährt der Roboter, ist jedoch nicht gewollt.
+
+TODO für nächstes Mal: rosbag in rviz ausführen und damit nachbearbeiten.
+
 \subsection{Überblick}
 p2os\_urdf: 3D Darstellung. Hier sind alle Anbauteile und Gelenke mit Koordiantensystem angegeben. Der Roboter nutzt diese, um Informationen auf sein zentrales Koordinatensystem umzurechnen, gleichzeitig kann es zur Simulation genutzt werden.
 
@@ -105,7 +120,7 @@ Pioneer kann jetzt bewegt werden. Launchfiles mussten angepasst werden, Dateien 
 Kartographierung funktioniert grundlegend. gmapping und gslam sind installiert und konfiguriert. Als leer gekennzeichnete Fläche bleibt leer, wenn man ein Hindernis nachträglich hinstellt. Entfernt man ein Hindernis, wird die Fläche bei nochmaligem Scannen als Leer gekennzeichnet.
 
 \subsection{26.11.2018}
-Git auf Pioneer installiert. So können die Projekte zuhause gebaut und dann vor Ort direkt verwendet werden. gmapping wurde eingestellt. Nachfolger ist vermutlich karthographer von Google.
+Git auf Pioneer installiert. So können die Projekte zuhause gebaut und dann vor Ort direkt verwendet werden. gmapping wurde eingestellt. Nachfolger ist vermutlich karthographer von Google. Bleiben erstmal bei gmapping, maximal wenn alles läuft mal schauen.
 
 \section{genutzte Links}
 \begin{itemize}
