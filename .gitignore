@@ -1,0 +1,8 @@
+# Dateien in Doku: #
+doku/*.txt
+doku/*.aux
+doku/*.out
+doku/*.pdf
+doku/*.gz
+doku/*.toc
+doku/*.log

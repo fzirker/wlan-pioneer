@@ -1,0 +1,123 @@
+\documentclass{scrartcl}% siehe <http://www.komascript.de>
+\usepackage{selinput}% Eingabecodierung automatisch ermitteln …
+\usepackage{hyperref}
+\SelectInputMappings{% … siehe <http://ctan.org/pkg/selinput>
+  adieresis={ä},
+  germandbls={ß},
+}
+\usepackage[ngerman]{babel}% Das Beispieldokument ist in Deutsch,
+                % daher wird mit Hilfe des babel-Pakets
+                % über Option ngerman auf deutsche Begriffe
+                % und gleichzeitig Trennmuster nach den
+                % aktuellen Rechtschreiberegeln umgeschaltet.
+                % Alternativen und weitere Sprachen sind
+                % verfügbar (siehe <http://ctan.org/pkg/babel>).
+                
+\setlength{\parskip}{0.2cm}  % 2mm Abstand zwischen zwei Absätzen
+\setlength{\parindent}{0mm}  % Absätze nicht einziehen
+
+\begin{document}
+% ----------------------------------------------------------------------------
+% Titel (erst nach \begin{document}, damit babel bereits voll aktiv ist:
+\titlehead{AMR}% optional
+\subject{Projektbericht}% optional
+\title{Autonome Mobile Roboter}% obligatorisch
+%\subtitle{Untertitel}% optional
+\author{Florian Zirker, Lukas Arnecke}% obligatorisch
+%\date{z.\,B. der Abgabetermin}% sinnvoll
+\publishers{Prof. Dr. Thomas Ihme}% optional
+\maketitle% verwendet die zuvor gemachte Angaben zur Gestaltung eines Titels
+% ----------------------------------------------------------------------------
+% Inhaltsverzeichnis:
+\tableofcontents
+% ----------------------------------------------------------------------------
+% Gliederung und Text:
+
+\section{Notizen}
+Genutzte Version: ROS Melodic unter Ubuntu 18.04
+
+nomodeset 1, Dadurch im BIOS Auflösung 1280x1024 eingestellt. Kein Bild, wenn ein Monitor diese Auflösung nicht darstellen kann. Lösung davon ist flashen des BIOS. Andere Einstellungsmöglichkeit wäre sinnvoll.
+
+Kinect: ttyUSB0
+
+Catkin Workspace Source muss nicht hinzugefügt werden. Steht in der bash.rc, wird direkt beim Starten hinzugefügt.
+
+MotorState wird nicht mehr benötigt. ist im pioneerMasterLaunchFile.launch konfiguriert.
+
+rosrun joy joy\_node wird ebenfalls nicht benötigt, vom Launscript mitgestartet.
+
+In sicktoolbox und sicktoolbox\_wrapper properties ändern. Muss mit C++ Version 11 compiliert werden. Aktuell ist C++ Version 17.
+
+catkin\_make und catkin\_make install muss jedes mal bei Änderungen gemacht werden. pioneerMasterLaunchFile wird dabei kopiert.
+
+Gruppe dialout zuordnen, sollte funktionieren. Alter Port war tty0
+
+Verweis geändert auf Unterordner /launch/. Dateien wurden seit dieser Version in den Unterordner verschoben, Verweise stimmen noch nicht.
+
+Mapping erstellt Pixelkarte. Kann abgespeichert und nachbearbeitet werden. Rosbag kann zum Speichern der Informationen genutzt und dann nachträglich bearbeitet werden.
+
+\subsection{Möglichkeiten WLAN}
+Mögliche Anzeigen pro Punkt: Neustes Signal, Stärkstes, Schwächstes, Durchschnitt, Median. Evtl als Parameter?
+
+dBm: Logarithmische Skala, misst die Signalstärke in Watt(?). Werte < 0 bedeuten Signalstärken < 1.
+
+\subsection{Überblick}
+p2os\_urdf: 3D Darstellung. Hier sind alle Anbauteile und Gelenke mit Koordiantensystem angegeben. Der Roboter nutzt diese, um Informationen auf sein zentrales Koordinatensystem umzurechnen, gleichzeitig kann es zur Simulation genutzt werden.
+
+p2os\_teleop: Nutzung mit Joystick, Controller oder Tastatur
+
+p20s\_launch: Hier liegen die Launchfiles. Auch die Treiber können von hier aus gestartet werden. Dabei wird direkt der Master mit gestartet.
+
+rosparam set p2os/port [PORT] zum Setzen des Ports.
+
+Versuchte Ports: 
+\begin{itemize}
+	\item ttyS0
+	\item ttyS1
+	\item ttyUSB0
+\end{itemize}
+
+\section{Befehle}
+In Launchfile schreiben?
+
+Aktuell wird nur roscore und Starten des MasterFiles benötigt.
+\begin{itemize}
+	\item roscore \&
+	\item rosrun joy joy\_node
+	\item roslaunch p2os\_launch pioneerMasterLaunchFile.launch \&
+	\item rostopic pub /cmd\_motor\_state p2os\_msgs/MotorState \"state: 1"
+	\item roslaunch p2os\_launch gmapping.launch \&
+\end{itemize}
+MotorState wird nicht mehr benötigt. ist im pioneerMasterLaunchFile.launch konfiguriert.
+
+rosrun joy joy\_node wird ebenfalls nicht benötigt, vom Launscript mitgestartet.
+
+\section{Zeitdoku}
+\subsection{05.11.2018}
+Betriebssystem neu installiert. Genutzt wird Ros Melodic unter Ubuntu 18.04 LTS.
+
+Memo: Nicht immer die neuste Version nutzen. Viele unnötige Probleme, da Bibliotheken noch nicht für Melodic vorhanden sind und daher selbst gebaut und konfiguriert werden müssen.
+
+\subsection{13.11.2018}
+Pioneer kann jetzt bewegt werden. Launchfiles mussten angepasst werden, Dateien wurden teilweise in andere Unterordner verschoben.
+
+\subsection{19.11.2018}
+Kartographierung funktioniert grundlegend. gmapping und gslam sind installiert und konfiguriert. Als leer gekennzeichnete Fläche bleibt leer, wenn man ein Hindernis nachträglich hinstellt. Entfernt man ein Hindernis, wird die Fläche bei nochmaligem Scannen als Leer gekennzeichnet.
+
+\subsection{26.11.2018}
+Git auf Pioneer installiert. So können die Projekte zuhause gebaut und dann vor Ort direkt verwendet werden. gmapping wurde eingestellt. Nachfolger ist vermutlich karthographer von Google.
+
+\section{genutzte Links}
+\begin{itemize}
+	\item \url{http://wiki.ros.org/p2os/Tutorials/Getting%20Started%20with%20p2os}
+		\item \url{http://wiki.ros.org/p2os_driver}
+		\item \url{http://wiki.ros.org/ROS/Tutorials/UnderstandingTopics}
+		\item \url{https://cmake.org/cmake/help/v3.1/prop_tgt/CXX_STANDARD.html}
+		\item \url{http://wiki.ros.org/amcl}
+		\item \url{https://github.com/ros-perception/slam\_gmapping}
+		\item \url{https://github.com/ros-perception/openslam\_gmapping}
+		\item \url{https://answers.ros.org/question/93986/combining-amcl-gmapping-odometry/}
+		\item \url{http://wiki.ros.org/rtabmap_ros/Tutorials/WifiSignalStrengthMappingUserDataUsage}
+	\end{itemize}
+
+\end{document}
