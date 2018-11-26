@@ -1,7 +1,7 @@
 # wlan_pioneer
 ROS package to map WLAN availability using a mobile robot (Pioneer P3-DX)
 
-This is a project for the lecture Autonomous Mobile Robots (ARM) at [Hochschule Mannheim](https://www.hs-mannheim.de/).
+This is a project for the lecture Autonomous Mobile Robots (AMR) at [Hochschule Mannheim](https://www.hs-mannheim.de/).
 
 
 ## Architecture
