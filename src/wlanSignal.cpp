@@ -8,14 +8,14 @@
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <cstring>
+#include <limits>
 
 using namespace std;
 using namespace ros;
 using namespace wlan_pioneer;
 
 
-int64_t getWlanSignalStrength(const string &interface) {
-   int sockfd;
+int8_t getWlanSignalStrength(const string &interface) {
    struct iw_statistics stats;
    struct iwreq req;
    memset(&stats, 0, sizeof(stats));
@@ -27,17 +27,19 @@ int64_t getWlanSignalStrength(const string &interface) {
    req.u.data.flags = 1;
 #endif
 
-   if((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
+   int sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+   if(sockfd == -1) {
       ROS_ERROR("Could not create simple datagram socket");
-      exit(EXIT_FAILURE);
+      return numeric_limits<int8_t>::min() ;
    }
    if(ioctl(sockfd, SIOCGIWSTATS, &req) == -1) {
-      ROS_ERROR("Error performing SIOCGIWSTATS");
+      ROS_ERROR("Error retrieving WLAN signal strength ");
       close(sockfd);
-      exit(EXIT_FAILURE);
+      return numeric_limits<int8_t>::min() ;
+
    }
    close(sockfd);
-   return (int8_t)stats.qual.level;
+   return stats.qual.level;
 }
 
 
@@ -71,7 +73,7 @@ int main(int argc, char **argv) {
       msg.level_24G = getWlanSignalStrength(wlanInterface24G);
       msg.level_5G = getWlanSignalStrength(wlanInterface5G);
 
-      ROS_INFO("Signal strength 2.4G: %li   Signal strength 5G: %li", msg.level_24G, msg.level_5G);
+      ROS_INFO("Signal strength 2.4G: %i   Signal strength 5G: %i", msg.level_24G, msg.level_5G);
 
       publisher.publish(msg);
       spinOnce();
