@@ -62,6 +62,7 @@ Mögliche Anzeigen pro Punkt: Neustes Signal, Stärkstes, Schwächstes, Durchsch
 dBm: Logarithmische Skala, misst die Signalstärke in Watt(?). Werte < 0 bedeuten Signalstärken < 1.
 
 \subsection{Rosbag}
+Rosbag Datei erstellen:
 \begin{itemize}
 	\item Ordner anlegen, in dem die Datei gespeichert werden soll
 	\item Roboter und alle benötigten topics starten
@@ -69,12 +70,21 @@ dBm: Logarithmische Skala, misst die Signalstärke in Watt(?). Werte < 0 bedeute
 	\item rosbag record -O subset *hier Topics durch Leerzeichen getrennt angeben* (Kann subset umbenannt werden?)
 	\item Aufzeichnung durch ctrl+c beenden
 \end{itemize}
-Topics: /pose, /joy, /scan
+Topics: /pose, /sonar, /scan, /slam\_gmapping/entropy /tf /base\_scan
 
 später kommt noch das wlansignal dazu, erstmal diese 3.
 /joy sollte nicht mit aufgezeichnet werden. Bei rosbag play fährt der Roboter, ist jedoch nicht gewollt.
 
 TODO für nächstes Mal: rosbag in rviz ausführen und damit nachbearbeiten.
+
+Rosbag in RVIZ:
+\begin{itemize}
+	\item rosparam set use\_sim\_time true
+	\item rosrun rviz rviz
+	\item rosbag play datei.bag --clock
+\end{itemize}
+
+In RViz muss die Map und der Laserscan by topic hinzugefügt werden. gmapping muss laufen, während der Pioneer offline sein muss. RViz bekommt ansonsten widersprüchliche Informationen.
 
 \subsection{Überblick}
 p2os\_urdf: 3D Darstellung. Hier sind alle Anbauteile und Gelenke mit Koordiantensystem angegeben. Der Roboter nutzt diese, um Informationen auf sein zentrales Koordinatensystem umzurechnen, gleichzeitig kann es zur Simulation genutzt werden.
@@ -105,7 +115,7 @@ Aktuell wird nur roscore und Starten des MasterFiles benötigt.
 \end{itemize}
 MotorState wird nicht mehr benötigt. ist im pioneerMasterLaunchFile.launch konfiguriert.
 
-rosrun joy joy\_node wird ebenfalls nicht benötigt, vom Launscript mitgestartet.
+rosrun joy joy\_node wird ebenfalls nicht benötigt, vom Launchscript mitgestartet.
 
 \section{Zeitdoku}
 \subsection{05.11.2018}
@@ -122,6 +132,9 @@ Kartographierung funktioniert grundlegend. gmapping und gslam sind installiert u
 \subsection{26.11.2018}
 Git auf Pioneer installiert. So können die Projekte zuhause gebaut und dann vor Ort direkt verwendet werden. gmapping wurde eingestellt. Nachfolger ist vermutlich karthographer von Google. Bleiben erstmal bei gmapping, maximal wenn alles läuft mal schauen.
 
+\subsection{27.11.2018}
+WLan Node umgebaut. Greift jetzt direkt auf den Socket zu und holt sich von da die Daten.
+
 \section{genutzte Links}
 \begin{itemize}
 	\item \url{http://wiki.ros.org/p2os/Tutorials/Getting%20Started%20with%20p2os}
@@ -134,6 +147,7 @@ Git auf Pioneer installiert. So können die Projekte zuhause gebaut und dann vor
 		\item \url{https://answers.ros.org/question/93986/combining-amcl-gmapping-odometry/}
 		\item \url{http://wiki.ros.org/rtabmap_ros/Tutorials/WifiSignalStrengthMappingUserDataUsage}
 		\item \url{http://wiki.ros.org/rosbag/Tutorials/Recording%20and%20playing%20back%20data}
+		\item \url{https://answers.ros.org/question/72202/how-to-playback-pointcloud-in-rviz-which-was-recorded-using-rosbag/}
 	\end{itemize}
 
 \end{document}
