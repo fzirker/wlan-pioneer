@@ -56,36 +56,6 @@ Verweis geändert auf Unterordner /launch/. Dateien wurden seit dieser Version i
 
 Mapping erstellt Pixelkarte. Kann abgespeichert und nachbearbeitet werden. Rosbag kann zum Speichern der Informationen genutzt und dann nachträglich bearbeitet werden.
 
-\subsection{Möglichkeiten WLAN}
-Mögliche Anzeigen pro Punkt: Neustes Signal, Stärkstes, Schwächstes, Durchschnitt, Median. Evtl als Parameter?
-
-dBm: Logarithmische Skala, misst die Signalstärke in Watt(?). Werte < 0 bedeuten Signalstärken < 1.
-
-\subsection{Rosbag}
-Rosbag Datei erstellen:
-\begin{itemize}
-	\item Ordner anlegen, in dem die Datei gespeichert werden soll
-	\item Roboter und alle benötigten topics starten
-	\item in den Ordner navigieren, der oben angelegt wurde
-	\item rosbag record -O subset *hier Topics durch Leerzeichen getrennt angeben* (Kann subset umbenannt werden?)
-	\item Aufzeichnung durch ctrl+c beenden
-\end{itemize}
-Topics: /pose, /sonar, /scan, /slam\_gmapping/entropy /tf /base\_scan
-
-später kommt noch das wlansignal dazu, erstmal diese 3.
-/joy sollte nicht mit aufgezeichnet werden. Bei rosbag play fährt der Roboter, ist jedoch nicht gewollt.
-
-TODO für nächstes Mal: rosbag in rviz ausführen und damit nachbearbeiten.
-
-Rosbag in RVIZ:
-\begin{itemize}
-	\item rosparam set use\_sim\_time true
-	\item rosrun rviz rviz
-	\item rosbag play datei.bag --clock
-\end{itemize}
-
-In RViz muss die Map und der Laserscan by topic hinzugefügt werden. gmapping muss laufen, während der Pioneer offline sein muss. RViz bekommt ansonsten widersprüchliche Informationen.
-
 \subsection{Überblick}
 p2os\_urdf: 3D Darstellung. Hier sind alle Anbauteile und Gelenke mit Koordiantensystem angegeben. Der Roboter nutzt diese, um Informationen auf sein zentrales Koordinatensystem umzurechnen, gleichzeitig kann es zur Simulation genutzt werden.
 
@@ -103,9 +73,7 @@ Versuchte Ports:
 \end{itemize}
 
 \section{Befehle}
-In Launchfile schreiben?
 
-Aktuell wird nur roscore und Starten des MasterFiles benötigt.
 \begin{itemize}
 	\item roscore \&
 	\item rosrun joy joy\_node
@@ -116,6 +84,45 @@ Aktuell wird nur roscore und Starten des MasterFiles benötigt.
 MotorState wird nicht mehr benötigt. ist im pioneerMasterLaunchFile.launch konfiguriert.
 
 rosrun joy joy\_node wird ebenfalls nicht benötigt, vom Launchscript mitgestartet.
+
+Neu nach kopieren des MasterLaunch files:
+\begin{itemize}
+	\item roscore \&
+	\item roslaunch wlan\_pioneer pioneerMasterLaunchFile.launch
+\end{itemize}
+Joystick muss an sein, bevor der Node gestartet wird.
+
+Das eigene Launchfile wird weiter bearbeitet, um alle nötigen Teile zu starten. Optionales Starten 
+
+\subsection{Möglichkeiten WLAN}
+Mögliche Anzeigen pro Punkt: Neustes Signal, Stärkstes, Schwächstes, Durchschnitt, Median. Evtl als Parameter?
+
+dBm: Logarithmische Skala, misst die Signalstärke in Watt(?). Werte kleiner 0 bedeuten Signalstärken kleiner 1.
+
+Launchfile: Value der Parameter muss noch überarbeitet werden. Aktuell gehen beide Wlan Signale auf denselben Stick, soll nicht so bleiben.
+
+\subsection{Rosbag}
+\textbf{Rosbag Datei erstellen:}
+\begin{itemize}
+	\item Ordner anlegen, in dem die Datei gespeichert werden soll
+	\item Roboter und alle benötigten topics starten
+	\item in den Ordner navigieren, der oben angelegt wurde
+	\item rosbag record -O subset *hier Topics durch Leerzeichen getrennt angeben* (Kann subset umbenannt werden?)
+	\item Aufzeichnung durch ctrl+c beenden
+\end{itemize}
+Topics: /pose /sonar /scan /slam\_gmapping/entropy /tf /base\_scan /wlan\_signal
+
+später kommt noch das wlansignal dazu, erstmal diese 3.
+/joy sollte nicht mit aufgezeichnet werden. Bei rosbag play fährt der Roboter, ist jedoch nicht gewollt.
+
+\textbf{Rosbag in RVIZ:}
+\begin{itemize}
+	\item rosparam set use\_sim\_time true
+	\item rosrun rviz rviz
+	\item rosbag play datei.bag --clock
+\end{itemize}
+
+In RViz muss die Map und der Laserscan by topic hinzugefügt werden. gmapping muss laufen, während der Pioneer offline sein muss. RViz bekommt ansonsten widersprüchliche Informationen.
 
 \section{Zeitdoku}
 \subsection{05.11.2018}
@@ -133,7 +140,12 @@ Kartographierung funktioniert grundlegend. gmapping und gslam sind installiert u
 Git auf Pioneer installiert. So können die Projekte zuhause gebaut und dann vor Ort direkt verwendet werden. gmapping wurde eingestellt. Nachfolger ist vermutlich karthographer von Google. Bleiben erstmal bei gmapping, maximal wenn alles läuft mal schauen.
 
 \subsection{27.11.2018}
-WLan Node umgebaut. Greift jetzt direkt auf den Socket zu und holt sich von da die Daten.
+WLan Node umgebaut. Greift jetzt direkt auf den Socket zu und holt sich von da die Daten. Abspielen der gespeicherten Fahrt funktioniert, roslaunch muss jedoch abgeschaltet sein. Rviz scheint den Roboter zu priorisieren, Daher wird die Map nicht neu erstellt beim Abspielen der Datei.
+
+\subsection{03.12.2018}
+Wlan Antennen sind bestellt, sollten am Mittwoch da sein. Doch vergessen, hoffentlich trotzdem bis Montag da.
+
+Eigenes Launchfile erweitert. Jetzt mit optionalem Rosbag. Wird über Parameter angesprochen, soll nicht immer gestartet werden. Datei ist bei knapp 1 Minute 6 mb groß.
 
 \section{genutzte Links}
 \begin{itemize}
