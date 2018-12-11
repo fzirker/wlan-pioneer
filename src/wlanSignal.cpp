@@ -46,14 +46,14 @@ int8_t getWlanSignalStrength(const string &interface) {
 int main(int argc, char **argv) {
    init(argc, argv, "wlanSignal");
    NodeHandle node;
-   string wlanInterface24G;
+   string wlanInterface2G4;
    string wlanInterface5G;
 
-   if (node.param<string>("wlan_interface_24G", wlanInterface24G, "wlan0")) {
-      ROS_INFO("Param wlan_interface_24G: %s", wlanInterface24G.c_str());
+   if (node.param<string>("wlan_interface_2G4", wlanInterface2G4, "wlan0")) {
+      ROS_INFO("Param wlan_interface_2G4: %s", wlanInterface2G4.c_str());
    }
    else {
-      ROS_INFO("Param 'wlan_interface_24G' not set. Using 'wlan0'");
+      ROS_INFO("Param 'wlan_interface_2G4' not set. Using 'wlan0'");
    }
 
    if (node.param<string>("wlan_interface_5G", wlanInterface5G, "wlan0")) {
@@ -70,10 +70,10 @@ int main(int argc, char **argv) {
    while (ok()) {
       WlanSignalMsg msg;
       msg.timestamp = Time::now();
-      msg.level_24G = getWlanSignalStrength(wlanInterface24G);
+      msg.level_2G4 = getWlanSignalStrength(wlanInterface2G4);
       msg.level_5G = getWlanSignalStrength(wlanInterface5G);
 
-      ROS_INFO("Signal strength 2.4G: %i   Signal strength 5G: %i", msg.level_24G, msg.level_5G);
+      ROS_INFO("Signal strength 2.4G: %i   Signal strength 5G: %i", msg.level_2G4, msg.level_5G);
 
       publisher.publish(msg);
       spinOnce();
