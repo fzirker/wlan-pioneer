@@ -5,6 +5,7 @@ add_compile_options(-std=c++11)
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  std_msgs
   message_generation
 )
 
@@ -19,10 +20,7 @@ generate_messages(
 )
 
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES wlan_pioneer
-  CATKIN_DEPENDS message_runtime roscpp
-#  DEPENDS system_lib
+
 )
 
 include_directories(
@@ -33,4 +31,4 @@ include_directories(
 
 add_executable(wlanSignal src/wlanSignal.cpp)
 target_link_libraries(wlanSignal ${catkin_LIBRARIES})
-add_dependencies(wlanSignal _generate_messages_cpp)
+add_dependencies(wlanSignal wlan_pioneer_generate_messages_cpp)
