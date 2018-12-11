@@ -6,3 +6,6 @@ doku/*.pdf
 doku/*.gz
 doku/*.toc
 doku/*.log
+
+# Ignore Visual Studio Code folder
+.vscode/
