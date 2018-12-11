@@ -14,7 +14,7 @@
 
     <!-- Set wifi interface and start wlan logging -->
     <group if="$(arg enableWlanScan)" >
-        <param name="wlan_interface_24G" type="string" value="wlx801f02c608aa" />
+        <param name="wlan_interface_2G4" type="string" value="wlx801f02c608aa" />
         <param name="wlan_interface_5G"  type="string" value="wlx801f02c608aa" />
         <node pkg="wlan_pioneer" name="wlanSignal" type="wlanSignal" />
     </group>
