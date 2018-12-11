@@ -110,7 +110,7 @@ Launchfile: Value der Parameter muss noch überarbeitet werden. Aktuell gehen be
 	\item rosbag record -O subset *hier Topics durch Leerzeichen getrennt angeben* (Kann subset umbenannt werden?)
 	\item Aufzeichnung durch ctrl+c beenden
 \end{itemize}
-Topics: /pose /sonar /scan /slam\_gmapping/entropy /tf /base\_scan /wlan\_signal
+Topics: /pose /sonar /scan /tf /base\_scan /wlan\_signal
 
 später kommt noch das wlansignal dazu, erstmal diese 3.
 /joy sollte nicht mit aufgezeichnet werden. Bei rosbag play fährt der Roboter, ist jedoch nicht gewollt.
@@ -149,6 +149,11 @@ Eigenes Launchfile erweitert. Jetzt mit optionalem Rosbag. Wird über Parameter 
 
 \subsection{04.12.2018}
 Befehle zum Speichern der Map gefunden und ausprobiert. Aufteilung des Projektes, andere Gruppe macht autonome Steuerung. Aktuell nehmen wir den Controller, Ziel ist es, deren Karte zu nutzen, bei der die Strecke vorgegeben ist. Diese Strecke wird dann abgefahren und die Wlan Abdeckung geprüft.
+
+\subsection{11.12.2018}
+Eduroam und die beiden HSMA Netze laufen unter derselben Frequenz und Signalstärke. Dadurch, dass die Menge an Geräten für Eduroam begrenzt ist nutzen wir zum Scannen eines der anderen Netze, voraussichtlich das VPN Netz.
+
+Speichern der Map funktionierte mit der Beispieldatei, scheint ein Problem unserer .bag Datei zu sein. Müssen nächstes Mal nochmal aufzeichnen.
 
 \section{genutzte Links}
 \begin{itemize}
