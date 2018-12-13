@@ -19,16 +19,18 @@ generate_messages(
   std_msgs
 )
 
-catkin_package(
-
-)
+catkin_package( )
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  /usr/local/include/
 )
 
-
+link_directories(
+  ${catkin_INCLUDE_DIRS}
+  /usr/local/lib/
+)
 
 add_executable(wlanSignal src/wlanSignal.cpp)
-target_link_libraries(wlanSignal ${catkin_LIBRARIES})
+target_link_libraries(wlanSignal ${catkin_LIBRARIES} wifi-scan)
 add_dependencies(wlanSignal wlan_pioneer_generate_messages_cpp)

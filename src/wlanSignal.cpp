@@ -3,61 +3,79 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
-#include <linux/wireless.h>
-#include <sys/types.h>
-#include <sys/ioctl.h>
-#include <sys/socket.h>
 #include <cstring>
 #include <limits>
+#include "wifi_scan.h"
 
 using namespace std;
 using namespace ros;
 using namespace wlan_pioneer;
 
-int8_t getWlanSignalStrength( const string& interface ) {
-   struct iw_statistics stats;
-   struct iwreq req;
-   memset( &stats, 0, sizeof( stats ) );
-   memset( &req, 0, sizeof( iwreq ) );
-   strncpy( req.ifr_name, interface.c_str(), 16 );
-   req.u.data.pointer = &stats;
-   req.u.data.length = sizeof( iw_statistics );
-#ifdef CLEAR_UPDATED
-   req.u.data.flags = 1;
-#endif
+const int MAX_APS = 64;            // the maximum amounts of APs (Access Points) we want to store
+struct wifi_scan* wifi = nullptr;  // this stores all the library information
+struct bss_info bss[MAX_APS];      // this is where we are going to keep informatoin about APs (Access Points)
+int status;
+int8_t signalLevel2G4 = numeric_limits<int8_t>::min();
+int8_t signalLevel5G = numeric_limits<int8_t>::min();
 
-   int sockfd = socket( AF_INET, SOCK_DGRAM, 0 );
-   if ( sockfd == -1 ) {
-      ROS_ERROR( "Could not create simple datagram socket" );
-      return numeric_limits<int8_t>::min();
+void scanInterface( const string& interface, const string& monitoringSsid ) {
+   signalLevel2G4 = numeric_limits<int8_t>::min();
+   signalLevel5G = numeric_limits<int8_t>::min();
+
+   if ( wifi == nullptr ) {
+      wifi = wifi_scan_init( interface.c_str() );
    }
-   if ( ioctl( sockfd, SIOCGIWSTATS, &req ) == -1 ) {
-      ROS_ERROR( "Error retrieving WLAN signal strength " );
-      close( sockfd );
-      return numeric_limits<int8_t>::min();
+
+   status = wifi_scan_all( wifi, bss, MAX_APS );
+
+   if ( status < 0 ) {
+      ROS_ERROR( "Unable to get WLAN scan data: %s", std::strerror( errno ) );
+      wifi_scan_close( wifi );
+      wifi = nullptr;
+      return;
    }
-   close( sockfd );
-   return stats.qual.level;
+   else {
+      for ( int i = 0; i < status && i < MAX_APS; ++i ) {
+         if ( bss[i].seen_ms_ago > 100 ) {
+            continue;  // we do not want old results
+         }
+
+         if ( std::strcmp( bss[i].ssid, monitoringSsid.c_str() ) != 0 ) {
+            continue;
+         }
+
+         int8_t level = bss[i].signal_mbm / 100;
+         if ( bss[i].frequency >= 2400 && bss[i].frequency <= 2499 ) {
+            // this AP is sending on 2.4 GHz band
+            signalLevel2G4 = std::max( signalLevel2G4, level );
+         }
+         else if ( bss[i].frequency >= 5000 && bss[i].frequency <= 5999 ) {
+            // this AP is sending on 5 GHz band
+            signalLevel5G = std::max( signalLevel5G, level );
+         }
+      }
+   }
 }
 
 int main( int argc, char** argv ) {
    init( argc, argv, "wlanSignal" );
+
    NodeHandle node;
-   string wlanInterface2G4;
-   string wlanInterface5G;
+   string wlanInterface;
+   string monitoringSsid;
 
-   if ( node.param<string>( "wlan_interface_2G4", wlanInterface2G4, "wlan0" ) ) {
-      ROS_INFO( "Param wlan_interface_2G4: %s", wlanInterface2G4.c_str() );
+   if ( node.param<string>( "wlan_ssid", monitoringSsid, "" ) ) {
+      ROS_INFO( "Param wlan_ssid: %s", monitoringSsid.c_str() );
    }
    else {
-      ROS_INFO( "Param 'wlan_interface_2G4' not set. Using 'wlan0'" );
+      ROS_ERROR( "Param 'wlan_ssid' not set. " );
    }
 
-   if ( node.param<string>( "wlan_interface_5G", wlanInterface5G, "wlan0" ) ) {
-      ROS_INFO( "Param wlan_interface_5G: %s", wlanInterface5G.c_str() );
+   if ( node.param<string>( "wlan_interface", wlanInterface, "wlan0" ) ) {
+      ROS_INFO( "Param wlan_interface: %s", wlanInterface.c_str() );
    }
    else {
-      ROS_INFO( "Param 'wlan_interface_5G' not set. Using 'wlan0'" );
+      ROS_INFO( "Param 'wlan_interface' not set. Using 'wlan0'" );
    }
 
    // topic: wlan_signal
@@ -65,10 +83,13 @@ int main( int argc, char** argv ) {
    Rate loopRate( 1 );  // every second
 
    while ( ok() ) {
+      scanInterface( wlanInterface, monitoringSsid );
+
       WlanSignalMsg msg;
       msg.timestamp = Time::now();
-      msg.level_2G4 = getWlanSignalStrength( wlanInterface2G4 );
-      msg.level_5G = getWlanSignalStrength( wlanInterface5G );
+      msg.level_2G4 = signalLevel2G4;
+      msg.level_5G = signalLevel5G;
+      msg.ssid = wlanInterface;
 
       ROS_INFO( "Signal strength 2.4G: %i   Signal strength 5G: %i", msg.level_2G4, msg.level_5G );
 
@@ -76,5 +97,7 @@ int main( int argc, char** argv ) {
       spinOnce();
       loopRate.sleep();
    }
+
+   wifi_scan_close( wifi );
    return 0;
 }
