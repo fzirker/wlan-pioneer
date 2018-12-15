@@ -34,3 +34,9 @@ link_directories(
 add_executable(wlanSignal src/wlanSignal.cpp)
 target_link_libraries(wlanSignal ${catkin_LIBRARIES} wifi-scan)
 add_dependencies(wlanSignal wlan_pioneer_generate_messages_cpp)
+
+
+SET(CMAKE_INSTALL_RPATH ${catkin_LIBRARIES})
+SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+SET(CMAKE_EXE_LINKER_FLAGS "-Wl,--disable-new-dtags")
