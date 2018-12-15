@@ -11,22 +11,25 @@ using namespace std;
 using namespace ros;
 using namespace wlan_pioneer;
 
+// Global variables for wifi scanning
 const int MAX_APS = 64;            // the maximum amounts of APs (Access Points) we want to store
 struct wifi_scan* wifi = nullptr;  // this stores all the library information
 struct bss_info bss[MAX_APS];      // this is where we are going to keep informatoin about APs (Access Points)
-int status;
-int8_t signalLevel2G4 = numeric_limits<int8_t>::min();
-int8_t signalLevel5G = numeric_limits<int8_t>::min();
+
+WlanSignalMsg msg;
 
 void scanInterface( const string& interface, const string& monitoringSsid ) {
-   signalLevel2G4 = numeric_limits<int8_t>::min();
-   signalLevel5G = numeric_limits<int8_t>::min();
+
+   msg.level_2G4 = numeric_limits<int8_t>::min();
+   msg.level_5G = numeric_limits<int8_t>::min();
+   msg.cellCount_2G4 = 0;
+   msg.cellCount_5G = 0;
 
    if ( wifi == nullptr ) {
       wifi = wifi_scan_init( interface.c_str() );
    }
 
-   status = wifi_scan_all( wifi, bss, MAX_APS );
+   int status = wifi_scan_all( wifi, bss, MAX_APS );
 
    if ( status < 0 ) {
       ROS_ERROR( "Unable to get WLAN scan data: %s", std::strerror( errno ) );
@@ -47,11 +50,13 @@ void scanInterface( const string& interface, const string& monitoringSsid ) {
          int8_t level = bss[i].signal_mbm / 100;
          if ( bss[i].frequency >= 2400 && bss[i].frequency <= 2499 ) {
             // this AP is sending on 2.4 GHz band
-            signalLevel2G4 = std::max( signalLevel2G4, level );
+            msg.level_2G4 = std::max( msg.level_2G4, level );
+            msg.cellCount_2G4++;
          }
          else if ( bss[i].frequency >= 5000 && bss[i].frequency <= 5999 ) {
             // this AP is sending on 5 GHz band
-            signalLevel5G = std::max( signalLevel5G, level );
+            msg.level_5G = std::max( msg.level_5G, level );
+            msg.cellCount_5G++;
          }
       }
    }
@@ -82,16 +87,18 @@ int main( int argc, char** argv ) {
    Publisher publisher = node.advertise<WlanSignalMsg>( "wlan_signal", 1000 );
    Rate loopRate( 1 );  // every second
 
+   msg.ssid = monitoringSsid;
+
    while ( ok() ) {
+
       scanInterface( wlanInterface, monitoringSsid );
-
-      WlanSignalMsg msg;
       msg.timestamp = Time::now();
-      msg.level_2G4 = signalLevel2G4;
-      msg.level_5G = signalLevel5G;
-      msg.ssid = monitoringSsid;
 
-      ROS_INFO( "Signal strength 2.4G: %i   Signal strength 5G: %i", msg.level_2G4, msg.level_5G );
+      ROS_INFO( "Signal strength 2.4G: %i (%d Cells)   Signal strength 5G: %i (%d Cells)",
+         msg.level_2G4,
+         msg.cellCount_2G4,
+         msg.level_5G,
+         msg.cellCount_5G);
 
       publisher.publish( msg );
       spinOnce();
