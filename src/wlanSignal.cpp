@@ -89,7 +89,7 @@ int main( int argc, char** argv ) {
       msg.timestamp = Time::now();
       msg.level_2G4 = signalLevel2G4;
       msg.level_5G = signalLevel5G;
-      msg.ssid = wlanInterface;
+      msg.ssid = monitoringSsid;
 
       ROS_INFO( "Signal strength 2.4G: %i   Signal strength 5G: %i", msg.level_2G4, msg.level_5G );
 
