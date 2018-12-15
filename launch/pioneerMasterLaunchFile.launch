@@ -8,32 +8,30 @@
 	<arg name="Transform" value="1" />
 	<arg name="Dashboard" value="0" />
 	<arg name="enableMotor" value="1" />
-    <arg name="enableWlanScan" value="1" />
-    <arg name="enableGmapping" value="1" />
-    <arg name="enableBagging" value="1" />
+   <arg name="enableWlanScan" value="1" />
+   <arg name="enableGmapping" value="1" />
+   <arg name="enableBagging" value="1" />
 
     <!-- Set wifi interface and start wlan logging -->
-    <group if="$(arg enableWlanScan)" >
-        <param name="wlan_interface_2G4" type="string" value="wlx801f02c608aa" />
-        <param name="wlan_interface_5G"  type="string" value="wlx801f02c608aa" />
-        <node pkg="wlan_pioneer" name="wlanSignal" type="wlanSignal" />
-    </group>
+   <group if="$(arg enableWlanScan)" >
+      <include file="$(find wlan_pioneer)/launch/wlanSignal.launch"/>
+   </group>
 
-    <!-- Enable the motor with rostopic pub -->
-    <group if="$(arg enableMotor)" >
-        <node name="rostopic" pkg="rostopic" type="rostopic" args="pub -1 /cmd_motor_state p2os_msgs/MotorState 1"/>
-    </group>
+   <!-- Enable the motor with rostopic pub -->
+   <group if="$(arg enableMotor)" >
+      <node name="rostopic" pkg="rostopic" type="rostopic" args="pub -1 /cmd_motor_state p2os_msgs/MotorState 1"/>
+   </group>
 
     <!-- Start the p2os ROS Driver -->
 	<group if="$(arg P2OS_Driver)" >
 	    <node pkg="p2os_driver" name="p2os_driver" type="p2os_driver"/>
 	</group>
-	
+
 	<!-- Start the Dashboard -->
 	<group if="$(arg Dashboard)">
         <node pkg="p2os_dashboard" name="p2os_dashboard" type="p2os_dashboard"/>
 	</group>
-	
+
     <!-- Start the teleoperation node for keyboard control -->
     <group if="$(arg KeyboardTeleop)">
         <include file="$(find p2os_launch)/launch/teleop_keyboard.launch" />
@@ -41,34 +39,34 @@
 
 	 <!-- Start the teleoperation node for joystick control -->
     <group if="$(arg JoystickTeleop)">
-        <include file="$(find p2os_launch)/launch/teleop_joy.launch" /> 
+        <include file="$(find p2os_launch)/launch/teleop_joy.launch" />
     </group>
 
     <!-- Publish the required transform -->
     <group if="$(arg Transform)">
-        <include file="$(find p2os_launch)/launch/tf_base_link_to_laser.launch" />          
+        <include file="$(find p2os_launch)/launch/tf_base_link_to_laser.launch" />
     </group>
 
     <!-- Start the Hokuyo Laser node if Hokuyo Laser is used -->
     <group if="$(arg HokuyoLaser)">
-        <include file="$(find p2os_launch)/launch/hokuyo.launch" /> 
+        <include file="$(find p2os_launch)/launch/hokuyo.launch" />
     </group>
 
     <!-- Start the SICK LMS Laser Node if a SICK Laser is used -->
     <group if="$(arg SICKLMSLaser)">
-        <include file="$(find p2os_launch)/launch/sicklms.launch" /> 
+        <include file="$(find p2os_launch)/launch/sicklms.launch" />
     </group>
 
     <include file="$(find p2os_urdf)/launch/pioneer3dx_urdf.launch"/>
 
 
     <group if="$(arg enableGmapping)" >
-        <include file="$(find p2os_launch)/launch/gmapping.launch" /> 
+        <include file="$(find p2os_launch)/launch/gmapping.launch" />
     </group>
 
     <group if="$(arg enableBagging)" >
-        <node pkg="rosbag" type="record" name="rosbag_record_wlan" 
-        args="record -o /tmp/wlan_pioneer /pose /sonar /scan /slam_gmapping/entropy /tf /base_scan /wlan_signal" />     
+        <node pkg="rosbag" type="record" name="rosbag_record_wlan"
+        args="record -o /tmp/wlan_pioneer /pose /sonar /scan /slam_gmapping/entropy /tf /base_scan /wlan_signal" />
     </group>
 
 </launch>
