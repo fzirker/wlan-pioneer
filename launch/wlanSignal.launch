@@ -1,7 +1,7 @@
 <launch>
 
-   <!-- <param name="wlan_interface" type="string" value="wlx74da38ef8aca" /> -->
-   <!-- <param name="wlan_ssid" type="string" value="HSMA-VPN" /> -->
+   <param name="wlan_interface" type="string" value="wlx74da38ef8aca" />
+   <param name="wlan_ssid" type="string" value="HSMA-VPN" />
 
    <node pkg="wlan_pioneer" type="wlanSignal" name="wlanSignal" launch-prefix="sudo -S -E"/>
 
