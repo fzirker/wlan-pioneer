@@ -66,7 +66,7 @@
 
     <group if="$(arg enableBagging)" >
         <node pkg="rosbag" type="record" name="rosbag_record_wlan"
-        args="record -o /tmp/wlan_pioneer /pose /sonar /scan /slam_gmapping/entropy /tf /base_scan /wlan_signal" />
+        args="record -o /tmp/wlan_pioneer /pose /scan /tf /wlan_signal" />
     </group>
 
 </launch>
