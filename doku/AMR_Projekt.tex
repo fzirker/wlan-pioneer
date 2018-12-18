@@ -110,19 +110,20 @@ Launchfile: Value der Parameter muss noch überarbeitet werden. Aktuell gehen be
 	\item rosbag record -O subset *hier Topics durch Leerzeichen getrennt angeben* (Kann subset umbenannt werden?)
 	\item Aufzeichnung durch ctrl+c beenden
 \end{itemize}
-Topics: /pose /sonar /scan /tf /base\_scan /wlan\_signal
-
-später kommt noch das wlansignal dazu, erstmal diese 3.
-/joy sollte nicht mit aufgezeichnet werden. Bei rosbag play fährt der Roboter, ist jedoch nicht gewollt.
+Topics: /pose /tf /base\_scan /wlan\_signal
 
 \textbf{Rosbag in RVIZ:}
 \begin{itemize}
+	\item roscore
 	\item rosparam set use\_sim\_time true
+	\item roslaunch p2os\_launch gmapping.launch
 	\item rosrun rviz rviz
 	\item rosbag play datei.bag --clock
+	\item rosrun map\_server map\_saver
 \end{itemize}
+Wird unter dem Pfad der .bag Datei als map.pgm und map.yaml gespeichert. Ist im Grunde ein Bild, wäre das Endergebnis wenn die Heatmap mit enthalten ist.
 
-In RViz muss die Map und der Laserscan by topic hinzugefügt werden. gmapping muss laufen, während der Pioneer offline sein muss. RViz bekommt ansonsten widersprüchliche Informationen.
+In RViz muss die Map by topic hinzugefügt werden. gmapping muss laufen.
 
 \section{Zeitdoku}
 \subsection{05.11.2018}
@@ -155,6 +156,17 @@ Eduroam und die beiden HSMA Netze laufen unter derselben Frequenz und Signalstä
 
 Speichern der Map funktionierte mit der Beispieldatei, scheint ein Problem unserer .bag Datei zu sein. Müssen nächstes Mal nochmal aufzeichnen.
 
+\subsection{17.12.2018}
+Eigene Map kann gespeichert werden. Fehler war, dass die zuordnung scan:=base\_scan bei unserer Aufzeichnung nicht benötigt wird und sogar Fehler produziert. Ohne diese Zuordnung funktioniert die Aufzeichnung und das Speichern.
+
+Wlan Stärken können aufgezeichnet werden, bei dem im Launchfile sudo übergeben ist und der Node so mit sudo Rechten gestartet wird.
+
+Ziel für heute ist das Starten des aktuellen Stands auf dem Roboter aufzeichnen einer neuen .bag Datei. Danach soll aus dieser Datei die Map inklusive Heatmap aufgezeichnet werden.
+
+Probleme, die Signalstärke aus dem Launchfile zu bekommen. Bei einer Probefahrt zeigte sich, dass ca alle 700 Sekunden die Verbindung abbricht und direkt wieder kommt. Kann an der verbauten Wlan Karte liegen.
+
+Alternatividee, die Karte nicht nachzubauen sondern direkt aus der Fahrt abzuspeichern.
+
 \section{genutzte Links}
 \begin{itemize}
 	\item \url{http://wiki.ros.org/p2os/Tutorials/Getting%20Started%20with%20p2os}
@@ -171,6 +183,7 @@ Speichern der Map funktionierte mit der Beispieldatei, scheint ein Problem unser
 		\item \url{http://wiki.ros.org/slam_gmapping/Tutorials/MappingFromLoggedData}
 		\item \url{http://wiki.ros.org/slam_gmapping/Tutorials/MappingFromLoggedData#record}
 		\item \url{https://answers.ros.org/question/228676/exclude-some-topics-from-rosbag-play/}
+		\item \url{http://wiki.ros.org/map_server}
 	\end{itemize}
 
 \end{document}
