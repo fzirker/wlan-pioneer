@@ -1,16 +1,18 @@
 <launch>
-	<!-- Defining the arguments -->
-	<arg name="HokuyoLaser" value="0" />
-	<arg name="SICKLMSLaser" value="1" />
-	<arg name="P2OS_Driver" value="1" />
-	<arg name="KeyboardTeleop" value="0" />
-	<arg name="JoystickTeleop" value="1" />
-	<arg name="Transform" value="1" />
-	<arg name="Dashboard" value="0" />
-	<arg name="enableMotor" value="1" />
-   <arg name="enableWlanScan" value="1" />
-   <arg name="enableGmapping" value="1" />
-   <arg name="enableBagging" value="1" />
+    <!-- Defining the arguments -->
+    <arg name="HokuyoLaser" value="0" />
+    <arg name="SICKLMSLaser" value="1" />
+    <arg name="P2OS_Driver" value="1" />
+    <arg name="KeyboardTeleop" value="0" />
+    <arg name="JoystickTeleop" value="1" />
+    <arg name="Transform" value="1" />
+    <arg name="Dashboard" value="0" />
+    <arg name="enableMotor" value="1" />
+    <arg name="enableWlanScan" value="1" />
+    <arg name="enableGmapping" value="1" />
+    <arg name="enableBagging" value="1" />
+    <arg name="enableHeatmap" value="0" />
+   
 
     <!-- Set wifi interface and start wlan logging -->
    <group if="$(arg enableWlanScan)" >
@@ -68,6 +70,12 @@
         <node pkg="rosbag" type="record" name="rosbag_record_wlan"
         args="record -o /tmp/wlan_pioneer /pose /scan /tf /wlan_signal" />
     </group>
+
+
+    <group if="$(arg enableHeatmap)" >
+        <include file="$(find wlan_pioneer)/launch/heatmap.launch"/>
+    </group>
+
 
 </launch>
 
