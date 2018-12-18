@@ -1,0 +1,16 @@
+<launch>
+
+   <arg name="spacing" default="0.4" />
+   <param name="/use_sim_time" value="true"/>
+
+
+   <node name="heatmap_client" pkg="heatmap" type="heatmap_client" respawn="false" />
+   <node name="path_planner" pkg="heatmap" type="path_planner.py" respawn="false" output="screen">
+      <param name="coverage_spacing" value="$(arg spacing)" />
+   </node>
+
+   
+   <node name="distance_measure" pkg="heatmap" type="distance_measure"/>
+   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find heatmap)/heatmap_sim.rviz" respawn="false" />
+
+</launch>
