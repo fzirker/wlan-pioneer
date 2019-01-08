@@ -33,6 +33,13 @@
 % ----------------------------------------------------------------------------
 % Gliederung und Text:
 
+\section{TODO}
+\begin{itemize}
+	\item Roboter überarbeiten, Passwörter und ähnliches löschen!
+	\item Wlan Zugänge löschen
+	\item SSH Keys löschen
+	\item Passwörter im Browser löschen
+\end{itemize}
 \section{Notizen}
 Genutzte Version: ROS Melodic unter Ubuntu 18.04
 
@@ -170,6 +177,17 @@ Alternatividee, die Karte nicht nachzubauen sondern direkt aus der Fahrt abzuspe
 \subsection{07.01.2019}
 Robotik system toolbox von matlab versteht ROS. Ziel ist jetzt, eine .csv zu erstellen mit X- und Y- Koordianten und der Signalstärke.
 
+\subsection{08.01.2019}
+csv Datei kann in Matlab eingelesen werden. Da die Position jedoch ausschließlich auf Odometrie beruht gibt es hier so starke Abweichungen, dass diese Daten nicht zu benutzen sind.
+
+Ergebnisbild kann in den Bericht eingefügt werden. Ihme will zu Demozwecken eine csv Datei und das Ergebnisbild. So kann man gut zeigen, wie viel Einfluss Odometrie hat.
+
+Eine weitere Möglichkeit ist eventuell, einen Knoten zu schreiben, der auf gmapping zugreift und die genaue Position aus gmapping veröffentlicht. Dieser Wert kann dann für die Bearbeitung genutzt werden, wenn er genau genug ist. Ob das zeitlich noch machbar ist muss geklärt werden.
+
+Matlab benötigt ',' als Trennzeichen. Auch darf die genutzte Tabelle keine Beschriftung haben.
+
+gmapping sollte beim fahren mitlaufen. Dadurch wird die Position genauer bestimmt. Genutzt wird dann nicht /odom sondern /base\_link. Das alte bagfile wurde nochmal abgespielt mit gmapping und dieser Ablauf nochmals abgespeichert. So werden die überarbeiteten Positionsdaten gespeichert.
+
 \section{genutzte Links}
 \begin{itemize}
 	\item \url{http://wiki.ros.org/p2os/Tutorials/Getting%20Started%20with%20p2os}
@@ -187,6 +205,9 @@ Robotik system toolbox von matlab versteht ROS. Ziel ist jetzt, eine .csv zu ers
 		\item \url{http://wiki.ros.org/slam_gmapping/Tutorials/MappingFromLoggedData#record}
 		\item \url{https://answers.ros.org/question/228676/exclude-some-topics-from-rosbag-play/}
 		\item \url{http://wiki.ros.org/map_server}
+		\item \url{https://de.mathworks.com/help/robotics/examples/work-with-rosbag-logfiles.html}
+		\item \url{https://de.mathworks.com/help/robotics/ref/rosbag.html}
+		\item \url{https://www.dis.uniroma1.it/~nardi/Didattica/CAI/matdid/robot-programming-ROS-introduction-to-navigation.pdf}
 	\end{itemize}
 
 \end{document}
