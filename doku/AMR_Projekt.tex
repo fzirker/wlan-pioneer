@@ -188,6 +188,14 @@ Matlab benötigt ',' als Trennzeichen. Auch darf die genutzte Tabelle keine Besc
 
 gmapping sollte beim fahren mitlaufen. Dadurch wird die Position genauer bestimmt. Genutzt wird dann nicht /odom sondern /base\_link. Das alte bagfile wurde nochmal abgespielt mit gmapping und dieser Ablauf nochmals abgespeichert. So werden die überarbeiteten Positionsdaten gespeichert.
 
+
+\subsection{14.01.2019}
+/tf enthält Korrekturvektoren, wodurch die Koordianten von /pose auf die eigentliche Postion zeigen. Enthält zwei Baumstrukturen: map -> odom -> base\_link und odom -> base\_link -> laser. Relevant ist hier nur die erste Struktur, die andere wird verworfen.
+
+Koordinaten können nicht einfach addiert werden. Die jeweilige Rotation hat noch Einfluss, muss ebenfalls einbezogen werden. Diese Berechnungen sind zu aufwändig, um sie selbst in Python zu schreiben. Versuch, die transformierten Werte direkt von /tf oder einer Bibliothek berechnen zu lassen.
+
+Plot als Scatterplot in Matlab scheint bisher am sinnvollsten.
+
 \section{genutzte Links}
 \begin{itemize}
 	\item \url{http://wiki.ros.org/p2os/Tutorials/Getting%20Started%20with%20p2os}
