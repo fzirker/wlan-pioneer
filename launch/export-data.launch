@@ -1,0 +1,11 @@
+<launch>
+
+   <param name="use_sim_time" value="true" />
+   <!-- <arg name="bagfile" value="/home/flo//Nextcloud/Studium/Master/2-IM/AMR_Autonome-Mobile-Roboter/Wifi-Pioneer/bag-files/wlan_pioneer_2018-12-18-18-43-47.bag" /> -->
+   <arg name="bagfile" value="/home/flo//Nextcloud/Studium/Master/2-IM/AMR_Autonome-Mobile-Roboter/Wifi-Pioneer/bag-files/wlan_pioneer_2018-12-17-17-14-03.bag" />
+
+   <node pkg="wlan_pioneer" type="export-data.py" name="export_data" args="$(arg bagfile)" />
+   <node pkg="rosbag" name="rosbag" type="play" args="--clock $(arg bagfile)" required="true"/>
+
+</launch>
+
