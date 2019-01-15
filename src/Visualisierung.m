@@ -1,8 +1,18 @@
-%Array = csvread('bag-filesfiltered.csv');
-Array = csvread('visualisierung.csv');
+Array = csvread('visualisierung1712.csv');
 x = Array(:,1);
 y = Array(:,2);
 g24 = Array(:,3);
 g5 = Array(:,4);
-plot(x,y);
-
+z = g24;
+%load map;
+pointsize = 30;
+%colormap(map);
+%colormapeditor();
+colormap(jet(255));
+%colormap(autumn(255));
+%colormap(hot(255));
+%colormap(cool(255));
+%colormap(spring(255));
+%colormap(winter(255));
+scatter(x, y, pointsize, z, 'filled');
+daspect([1 1 1]);

@@ -36,9 +36,9 @@
 \section{TODO}
 \begin{itemize}
 	\item Roboter überarbeiten, Passwörter und ähnliches löschen!
-	\item Wlan Zugänge löschen
-	\item SSH Keys löschen
-	\item Passwörter im Browser löschen
+	\item Wlan Zugänge löschen (Nur mit passender Karte nutzbar)
+	\item SSH Keys löschen (check)
+	\item Passwörter im Browser löschen (check)
 \end{itemize}
 \section{Notizen}
 Genutzte Version: ROS Melodic unter Ubuntu 18.04
@@ -196,6 +196,13 @@ Koordinaten können nicht einfach addiert werden. Die jeweilige Rotation hat noc
 
 Plot als Scatterplot in Matlab scheint bisher am sinnvollsten.
 
+\subsection{15.01.2019}
+Scatterplot gibt den Graphen entsprechend eingefärbt. Wirklich erkennbar sind nur 2 Farben, vermutlich liegt es daran, dass die gemessenen Signalstärken immer eher stark sind. Fällt das Signal mal ab verbindet der Roboter sich mit einem neuen Router und hat weiterhin ein starkes Signal. Diese Messung ist vermutlich in den Randbereichen deutlich interessanter.
+
+Eigene Farbvorlage ist erstellt, kann auch über colormapeditor aufgerufen und bearbeitet werden. Anzeige geht jetzt nach Ampelsystem. Speichern der Colormap funktioniert nicht. So muss zu Beginn der Editor aufgerufen und alle Zuordnungen gelöscht werden. Dann benötigt man nur 3 Punkte, Ganz links einen grünen, in der Mitte einen gelben und am Ende einen Roten. Die Farbübergänge werden vom Editor ausgefüllt. Aktuell doch Jet als Farbskala.
+
+Bilder sind generiert, jeweils 2,4G und 5G für die Karte vom 17.12 und 18.12.
+
 \section{genutzte Links}
 \begin{itemize}
 	\item \url{http://wiki.ros.org/p2os/Tutorials/Getting%20Started%20with%20p2os}
@@ -216,6 +223,9 @@ Plot als Scatterplot in Matlab scheint bisher am sinnvollsten.
 		\item \url{https://de.mathworks.com/help/robotics/examples/work-with-rosbag-logfiles.html}
 		\item \url{https://de.mathworks.com/help/robotics/ref/rosbag.html}
 		\item \url{https://www.dis.uniroma1.it/~nardi/Didattica/CAI/matdid/robot-programming-ROS-introduction-to-navigation.pdf}
+		\item \url{https://de.mathworks.com/help/matlab/ref/colormap.html}
+		\item \url{https://de.mathworks.com/matlabcentral/answers/229286-saving-edited-colormap-data}
+		\item \url{https://stackoverflow.com/questions/44994059/how-to-save-a-custom-colormap-and-use-it-again-in-matlab}
 	\end{itemize}
 
 \end{document}
