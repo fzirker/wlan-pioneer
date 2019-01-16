@@ -7,5 +7,14 @@ doku/*.gz
 doku/*.toc
 doku/*.log
 
+# Dateien in Bericht: #
+bericht/*.txt
+bericht/*.aux
+bericht/*.out
+bericht/*.pdf
+bericht/*.gz
+bericht/*.toc
+bericht/*.log
+
 # Ignore Visual Studio Code folder
 .vscode/
