@@ -36,28 +36,62 @@
 \section{Einleitung}
 
 \section{Grundlagen}
-\subsection{Pioneer 3-DX}
+\subsection{Pioneer 3-DX Roboter}
 Der mobile Forschungsroboter Pioneer 3-DX ist eine Roboterplattform, die für fast alle Anwendungen modifizierbar ist.
 \subsection{Robot Operating System}
 \subsection{Kartierung}
 
-\section{Problemstellung}
+\subsection{Wireless Local Area Network}
+In dieser Sektion wird folgendes erklärt:
+\begin{itemize}
+	\item WLAN (Funkmodi, Standards, )
+	\item Kanäle 2,4 GHz und 5GHz
+	\item Messungen
+	\item RSSI-Wert
+	\item ...
+\end{itemize}
+% Zuständigkeit: Flo
 
-\section{Lösung}
+
+\section{Problemstellung}
+% Eventuell können wir hier noch weiter unterscheiden: Inbetriebnahme, Kartierung und WLAN-Messung. Bin mir nicht sicher. FZ
+
+\section{Realisierung}
 \subsection{Genutzte Tools}
 Für das Projekt wurde der Rechner auf dem Roboter komplett neu aufgesetzt. Für ein möglichst modernes System wurde Ubuntu 18.04 LTS installiert, wofür dann ROS in der Version Melodic vorgesehen ist und aus diesem Grund installiert wurde.
 
 Desweiteren 
-\subsection{Umsetzung}
+
+
+\subsection{Architektur}
+Wir setzen auf ROS. Was wiederum auf dem Betriebsystem sitzt. Wir nutzen das Messaging-System (Publish-Subscribe). Wir nutzen p2os was wiederum auf ??? nutzt. Wir schreiben unseren eigenen Knoten.
+
 \subsection{Aufgetretene Probleme}
+% Wollen wir  wirklich in einem Kapitel erklären was für Probleme wir hatten? Ich denke es macht mehr sinn die einzellnen Schritte genauer zu erklären und dann an der entsprechenden Stelle zu erklären was schwierig war. (Siehe folgende Kapitel)
 ROS Melodic ist zwar veröffentlicht und für Ubuntu 18.04 vorgesehen, jedoch sind noch nicht alle Funktionen der Vorgängerversionen implementiert. Das führte dazu, dass manche Aufrufe der Launchscripte manuell umgeschrieben und ROS neu kompiliert werden musste.
 
 Auch war das Extrahieren der Signalstärken erwies sich als Problem.
 %Sollte Flo möglichst ausfüllen
+
+\subsection{Inbetriebnahme und Installation}
+% Alles veraltet. Vorhergehende Gruppe hat Docker ansazt gewält, nicht mehr lauffähig. Neues Betriebsystem. Neues ROS. Damit einige Probleme: Selbstcompilieren einiger Pakete nötig. 
+
+\subsection{Simultaneous Localization and Mapping}
+
+\subsection{Aufzeichnung der Fahrt}
+
+\subsection{Kartenerstellung aus aufgezeichneter Fahrt}
+
+\subsection{WLAN-Messung}
+% Zuständig:Flo
+
+\section{Zusammenfassung}
+
+
 \section{Ausblick}
 Die Datenerhebung funktioniert. Der nächste Schritt wäre, mit dem Roboter strukturiert ein Gebiet zu kartieren und eine Flächendeckende Abdeckung zu erstellen. Auch würde eine Lösung, mit der eine Heatmap in RVIZ oder direkt danach überlagert eingeblendet werden kann, die Nachbearbeitung deutlich vereinfachen.
 
-\section{Zusammenfassung}
+
 
 \section{Literaturverzeichnis}
 
