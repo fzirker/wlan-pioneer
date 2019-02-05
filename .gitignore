@@ -15,6 +15,11 @@ bericht/*.pdf
 bericht/*.gz
 bericht/*.toc
 bericht/*.log
+bericht/*.bbl
+bericht/*.bcf
+bericht/*.blg
+bericht/*.xml
+bericht/Bilder/*
 
 # Ignore Visual Studio Code folder
 .vscode/
