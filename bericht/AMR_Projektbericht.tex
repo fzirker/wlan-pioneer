@@ -106,6 +106,20 @@ In dieser Sektion wird folgendes erklärt:
 \newpage
 \section{Problemstellung}
 % Eventuell können wir hier noch weiter unterscheiden: Inbetriebnahme, Kartierung und WLAN-Messung. Bin mir nicht sicher. FZ
+Im Rahmen des Projektes gibt es verschiedene Problemstellungen, welche zwar aufeinander aufbauen, jedoch trotzdem in sich abgeschlossene Vorgaben beinhalten.
+
+\subsection{Inbetriebnahme}
+Der Stand des Roboters vor Beginn des Projektes war, dass auf dem aufgebautem Rechner Ubuntu 14.04 LTS installiert war, auf dem wiederum ein Dockersystem lief. ROS lief dann unter Docker, wodurch verschiedene Konfigurationen parallel auf einem Roboter genutzt werden konnten. Da die ROS Version sich mit der Ubuntuversion ändert lief hier entsprechend auch ROS Kinetic.
+
+Ziel ist es, auf eine neuere ROS Version umzusteigen, um auch neu implementierte Funktionen nutzen zu können. Daher muss neben ROS auch Ubuntu neu installiert und in diesem Zuge geprüft werden, ob an dem Ansatz mit Docker festgehalten wird.
+
+\subsection{Kartierung}
+Das neu installierte System soll eine Karte aus dem abgefahrenen Gebiet erstellen und diese anzeigen können. Hierbei sollte beachtet werden, dass die Karte sowohl durch manuelles Fahren erstellt werden kann, als auch eine bereits bestehende Karte hinterlegt werden kann, um dann nach dieser eine vorgegebene Strecke abzufahren. Im Hinblick auf das eigentliche Thema, das Kartieren der WLAN Signalstärke, liegt der Schwerpunkt jedoch entsprechend nicht auf der Umgebungskartierung.
+
+\subsection{WLAN-Messung}
+Neben der 2D Karte auf dem vorherigen Kapitel soll auch das WLAN kartografiert werden. Hierbei soll die Signalstärke für ein angegebenes Netz synchronisiert auf die aktuelle Position des Roboters aufgezeichnet werden.
+
+Desweiteren soll eine Möglichkeit gefunden werden, die erhobenen Daten als Heatmap auf einer Karte zu visualisieren.
 
 \newpage
 \section{Realisierung}
@@ -116,7 +130,7 @@ Desweiteren
 
 
 \subsection{Architektur}
-Wir setzen auf ROS. Was wiederum auf dem Betriebsystem sitzt. Wir nutzen das Messaging-System (Publish-Subscribe). Wir nutzen p2os was wiederum auf ??? nutzt. Wir schreiben unseren eigenen Knoten.
+Wir setzen auf ROS. Was wiederum auf dem Betriebsystem sitzt. Wir nutzen das Messaging-System (Publisher/Subscriber). Wir nutzen p2os was wiederum auf ??? nutzt. Wir schreiben unseren eigenen Knoten.
 
 \subsection{Aufgetretene Probleme}
 % Wollen wir  wirklich in einem Kapitel erklären was für Probleme wir hatten? Ich denke es macht mehr sinn die einzellnen Schritte genauer zu erklären und dann an der entsprechenden Stelle zu erklären was schwierig war. (Siehe folgende Kapitel)
