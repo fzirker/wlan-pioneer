@@ -53,21 +53,44 @@ style=ieee                     % Zitate als Zahlen [1]
 % Gliederung und Text:
 
 \section{Einleitung}
+\textbf{Muss noch überarbeitet werden}
 
+Eine moderne Hochschule ist auf eine funktionierende Netzwerkinfrastruktur angewiesen. Dazu gehört auch eine möglichst vollständige WLAN-Abdeckung, damit sowohl Studenten als auch Dozenten und Mitarbeiter ihre jeweiligen Aufgaben erfüllen können auch wenn sie sich nicht an einem fest installierten Rechner befinden.
+
+Um genau diese WLAN-Abdeckung zu prüfen und eventuelle Lücken konkret aufzeigen zu können gab es im Rahmen der Vorlesung \textit{Autonome Mobile Roboter (AMR)} das Projekt, die Signalstärke mithilfe eines Roboters flächendeckend aufzeichnen zu können.
+
+\textbf{Ab hier weiter!}
+
+\newpage
 \section{Grundlagen}
 \subsection{Pioneer 3-DX Roboter}
 Der mobile Forschungsroboter Pioneer 3-DX ist eine Roboterplattform, die für fast alle Anwendungen modifizierbar ist. Er besteht im Grunde nur aus einem Motor, Reifen und einer Plattform, durch die benötigte Module angebracht werden können \cite{pioneer}. Die Steuerungseinheit ist so gebaut, dass sie über das \textit{Robot Operating System} (ROS) angesprochen werden kann.
 
-\begin{figure}
+\begin{figure}[h]
 	\centering
 	\includegraphics{bilder/pioneerRoh.jpg}
-	\caption{Pioneed 3-DX Roboter ohne Aufbauten}
+	\caption{Pioneer 3-DX Roboter ohne Aufbauten \cite{pioneer}}
 	\label{pioneerRoh}
 \end{figure}
 
 Auf der Plattform ist ein Laser, ein Wlan-Modul und eine Rechner aufgebaut, mit deren Hilfe die Kartierung durchgeführt wird. Auf dem Rechner läuft Ubuntu 18.04 LTS, auf welchem wiederum ROS in der Version Melodic installiert ist.
+
 \subsection{Robot Operating System}
+\textit{ROS} ist ein Open Source Framework, welches speziell für auf die Nutzung für autonome Systeme entwickelt wurde. Die Idee von ROS ist die Bereitstellung von wiederverwendbaren Modulen, von denen jedes eine eigene Aufgabe erfüllen kann und die beliebig kombiniert werden können \cite{rosIntro}.
+
+Für ein möglichst einfaches Management liefert ROS eine eigene Paketverwaltung, mit der die benötigten Pakete nachinstalliert werden können. Ein Paket enthält unter Anderem den Quellcode und Launchfiles für die \textit{Nodes}, in denen die Berechnungen stattfinden \cite{rosIntro2}. Jeder Node ist für andere Berechnungen zuständig, so gibt es einen Node für die Koordinatentransformationen zwischen den einzelnen Bauteilen des Roboters, einen für den Laserscanner, einen für die Berechnung der WLAN-Signalstärke und einen für die Ansteuerung des Motors.
+
+Die Kommunikation zwischen Nodes, wie in  läuft über ein Publisher/Subscriber Prinzip, das bedeutet, dass ein Node, wie in Abbildung \ref{concept} dargestellt, definierte Informationen über einen \textit{Topic} veröffentlicht. Diese Topics können wiederum von anderen Nodes abgegriffen und weiter verarbeitet werden. Die enthaltenen Informationen werden über \textit{Messages} ausgetauscht, wodurch sowohl die Struktur als auch der Inhalt klar definiert sind. Alle Nodes müssen sich bei dem \textit{Master}, dem Namens- und Registrierungsservice innerhalb der ROS Umgebung, registrieren, um sich gegenseitig zu finden und dann auch Daten austauschen zu können \cite{rosKonzept}.
+
+\begin{figure}
+	\centering
+	\includegraphics{bilder/ROS_concepts.png}
+	\caption{Schematischer Aufbau der Kommunikation \cite{rosKonzept}}
+	\label{concept}
+\end{figure}
+
 \subsection{Kartierung}
+Für die Kartierung bietet ROS das Package \textit{gmapping}, wenn die Karte mithilfe eines Lasermoduls erstellt werden soll. Dieses Package bietet die Funktionalität, um eine laserbasierte Karte mithilfe des Systems \textit{Simultaneous Localization and Mapping} (SLAM) zu erstellen. Hierbei wird eine 2D Karte aus der Kombination von den Laserdaten und der vermuteten eigenen Position erstellt. Die Daten über die eigene Position kommen aus den Odometriedaten, also der vermuteten Bewegungsrichtung und -distanz anhand der Bewegungen der Räder. Der Node \textit{slam\_gmapping} subscriped die Topics \textit{tf} und \textit{scan}, aus denen es dann die Karte berechnet und unter dem Topic map veröffentlicht. \cite{gmap}. Die Abschätzung des Drehwinkels um die eigene Achse durch Odometrie ist vergleichsweise ungenau, weshalb es zu fehlerhaften Karten kommen kann, wenn der Roboter während der Kartierung zu viele Kurven fährt. Der Abgleich mit den Laserdaten wirkt diesem Effekt entgegen, bei einem erneuten Abfahren des Bereiches können entstandene Verschiebungen erkannt und behoben werden.
 
 \subsection{Wireless Local Area Network}
 In dieser Sektion wird folgendes erklärt:
@@ -80,10 +103,11 @@ In dieser Sektion wird folgendes erklärt:
 \end{itemize}
 % Zuständigkeit: Flo
 
-
+\newpage
 \section{Problemstellung}
 % Eventuell können wir hier noch weiter unterscheiden: Inbetriebnahme, Kartierung und WLAN-Messung. Bin mir nicht sicher. FZ
 
+\newpage
 \section{Realisierung}
 \subsection{Genutzte Tools}
 Für das Projekt wurde der Rechner auf dem Roboter komplett neu aufgesetzt. Für ein möglichst modernes System wurde Ubuntu 18.04 LTS installiert, wofür dann ROS in der Version Melodic vorgesehen ist und aus diesem Grund installiert wurde.
@@ -118,12 +142,12 @@ Auch war das Extrahieren der Signalstärken erwies sich als Problem.
 
 \section{Zusammenfassung}
 
-
+\newpage
 \section{Ausblick}
 Die Datenerhebung funktioniert. Der nächste Schritt wäre, mit dem Roboter strukturiert ein Gebiet zu kartieren und eine Flächendeckende Abdeckung zu erstellen. Auch würde eine Lösung, mit der eine Heatmap in RVIZ oder direkt danach überlagert eingeblendet werden kann, die Nachbearbeitung deutlich vereinfachen.
 
 
-
+\newpage
 % Literaturverzeichnis erzeugen
 \begin{flushleft}
 	\printbibliography
