@@ -53,13 +53,13 @@ style=ieee                     % Zitate als Zahlen [1]
 % Gliederung und Text:
 
 \section{Einleitung}
-\textbf{Muss noch überarbeitet werden}
-
 Eine moderne Hochschule ist auf eine funktionierende Netzwerkinfrastruktur angewiesen. Dazu gehört auch eine möglichst vollständige WLAN-Abdeckung, damit sowohl Studenten als auch Dozenten und Mitarbeiter ihre jeweiligen Aufgaben erfüllen können auch wenn sie sich nicht an einem fest installierten Rechner befinden.
 
 Um genau diese WLAN-Abdeckung zu prüfen und eventuelle Lücken konkret aufzeigen zu können gab es im Rahmen der Vorlesung \textit{Autonome Mobile Roboter (AMR)} das Projekt, die Signalstärke mithilfe eines Roboters flächendeckend aufzeichnen zu können.
 
-\textbf{Ab hier weiter!}
+Zu diesem Zweck wurde auf einem Pioneer 3-DX die benötigte Hard- und Software installiert, um sowohl die eigene Position, als auch die Signalstärke des WLANs an diesem Punkt aufzuzeichnen.
+
+Es ist uns gelungen, die Signalstärke des Eduroam Netzwerkes aufzuzeichnen und zu visualisieren. Die aufgezeichneten Werte zeigen, dass es möglicherweise sinnvoll wäre, zumindest in den Vorlesungsräumen ausreichend starke Router zu installieren, um dort die Verfügbarkeit von beispielsweise Vorlesungsunterlagen zu gewährleisten. Dieses Projekt ist aber mehr als Proof of Concept zu verstehen, weshalb es für eine genauere Aussage wichtig wäre, das gesamte Gebäude abzufahren, um eine flächendeckende Aussage treffen zu können.
 
 \newpage
 \section{Grundlagen}
@@ -127,7 +127,7 @@ Desweiteren soll eine Möglichkeit gefunden werden, die erhobenen Daten als Heat
 \subsection{Genutzte Tools}
 Für das Projekt wurde der Rechner auf dem Roboter komplett neu aufgesetzt. Für ein möglichst modernes System wurde Ubuntu 18.04 LTS installiert, wofür dann ROS in der Version Melodic vorgesehen ist und aus diesem Grund installiert wurde.
 
-Als relevante Aufbauten auf dem Roboter ist als Laserscanner der \textit{Sick LMS-200} sowie als WLAN-Modul der \textbf{MODULNAME?} verbaut. Da der Roboter auch schon für andere Projekte benutzt wurde sind noch weitere Aufbauten bereits auf der Plattform verbaut, da sie aber für dieses Projekt nicht relevant sind wird hier nicht weiter darauf eingegangen.
+Als relevante Aufbauten auf dem Roboter ist als Laserscanner der \textit{Sick LMS-200} sowie als WLAN-Modul der \textit{EDIMAX EW-7811UAC} verbaut. Da der Roboter auch schon für andere Projekte benutzt wurde sind noch weitere Aufbauten bereits auf der Plattform verbaut, da sie aber für dieses Projekt nicht relevant sind wird hier nicht weiter darauf eingegangen.
 
 Als bestehende ROS Pakete wurden genutzt:
 
@@ -135,7 +135,7 @@ Als bestehende ROS Pakete wurden genutzt:
 Wie in Kapitel \ref{kartierung} bereits erwähnt dient das Paket \textit{gmapping} zur Erstellung einer 2D Karte aus einer Kombination von Informationen des Laserscanners und den Bewegungsdaten des Roboters. Diese Karte wird später als Grundlage verwendet, auf welcher dann die Heatmap erstellt wird.
 
 \paragraph{p2os}
-Das Paket \textit{p2os} enthält die Treiber und den Steuerungsnode für die Basis des für den Pioneer 3-DX. Er bildet die Schnittstelle zu der Hardware, wodurch wir uns damit nicht weiter auseinandersetzen müssen. 
+Das Paket \textit{p2os} enthält die Treiber und den Steuerungsnode für die Basis des für den Pioneer 3-DX. Er bildet die Schnittstelle zu der Hardware, wodurch wir uns damit nicht weiter auseinandersetzen müssen \cite{p2os}. 
 
 \paragraph{p2os\_teleop}
 Um die Steuerung des Pioneer auch mit einem Gerät ansprechen zu können liefert das Paket \textit{p2os\_teleop} die Schnittstelle, um den Roboter auch mit einem Controller fahren zu können.
@@ -159,10 +159,13 @@ Wie bereits eingangs erwähnt wurde der Rechner des Roboters komplett neu gemach
 Während der Installation von ROS ist uns aufgefallen, dass diese Version noch nicht fertig implementiert ist. Der Code ist auf GitHub veröffentlicht, also konnten wir uns die Pakete herunterladen und manuell kompilieren. Hierbei sind dann Fehler aufgetaucht, dass einzelne Dateien nicht gefunden wurden. Nach einiger dieser Fehlermeldungen ist uns aufgefallen, dass ganze Unterordner von einem Ordner in einen anderen geschoben wurden und daher die Verweise innerhalb des Codes nicht mehr stimmen. Nach dem Anpassen der Dateien auf den neuen Pfad konnten die Pakete dann kompiliert werden.
 
 \subsection{Simultaneous Localization and Mapping}
+Als \textit{Simultaneous Localization and Mapping} (SLAM) bezeichnet das ermitteln der eigenen Position bei gleichzeitiger Erstellung der Karte. Daraus ergibt sich das Problem, dass eine Berechnung der eigenen Position ohne Kenntnis der Umgebung sehr schwer möglich ist. Ebenso ist ein Erstellen einer Karte ohne eigene Position ein Problem \cite{slam}. Das ROS Paket \textit{gmapping} nutzt SLAM, um genau dieses Problem zu lösen und eine recht genaue Karte zu erstellen. Dies hat auch bei den ersten Versuchen bereits funktioniert, als einziges Problem sollte man beachten, dass die erstellte Karte bei zu vielen Kurven verzogen ist, da sich durch ein jede Kurve der Einfluss der Odometrie vergrößert und diese fehleranfällig ist.
 
 \subsection{Aufzeichnung der Fahrt}
+Um die Karte auch nachträglich erstellen zu können haben wir uns dazu entschieden, die relevanten Messages aufzuzeichnen. Wir haben also eine Rosbag Datei erstellt, in der die Topics \textit{/tf}, \textit{/pose}, \textit{/base\_scan} und \textit{/wlan\_signal} gespeichert werden. Aus dieser Datei kann man auch nachträglich eine Karte erstellen und muss nicht für jeden Versuch bei der Auswertung der Daten neu mit dem Roboter fahren. Auch kann man so die Fahrt auch zuhause simulieren ohne Zugriff auf die Hardware. Der Topic /wlan\_signal ist selbst geschrieben und wir später noch genauer erklärt.
 
 \subsection{Kartenerstellung aus aufgezeichneter Fahrt}
+Die von gmapping bereitgestellten Informationen können in \textit{rviz} als Karte visualisert werden. Hierbei kann ausgewählt werden, welche Topics genau dargestellt werden sollen, da nicht alle laufenden Topics der Kartenerstellung dienen sondern auch beispielsweise Steuerungsfunktionen haben.
 
 \subsection{WLAN-Messung}
 % Zuständig:Flo
@@ -170,14 +173,42 @@ Während der Installation von ROS ist uns aufgefallen, dass diese Version noch n
 \newpage
 \section{Ergebnisse}
 %Was ist raus gekommen. Neue Erkenntnisse, Lösungen, Unsere zwei Karten.
+Es ist uns gelungen, die Signalstärke des WLANs aufzugreifen und auszuwerten. Desweiteren konnten wir die Signale auch auf einer parallel dazu erstellten Karte visualisieren. Zur Erstellung der Karten haben wir die Karte aus dem Map Server von ROS exportiert und eine CSV Datei erstellt, bei der pro Zeitpunkt ein Eintrag geschrieben wird mit den aktuellen Koordinaten des Roboters und der dazugehörigen Signalstärken. Aus dieser Datei wurden dann in Matlab zwei Schaubilder erstellt, eines für die Signalstärke des 2,4G Netzes als Farbskala und eines für die 5G Signalstärke. Als Farbskala haben wir uns für die Jet Skala entschieden, die auch in Abbildung \ref{skala} dargestellt ist.
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=\textwidth]{bilder/wlan-heatmap-2G4.png}
+	\caption{Erstellte Karte aus der Signalstärke des 2,4G Netzes}
+	\label{2g4}
+\end{figure}
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=\textwidth]{bilder/wlan-heatmap-5G.png}
+	\caption{Erstellte Karte aus der Signalstärke des 5G Netzes}
+	\label{5g}
+\end{figure}
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=\textwidth]{bilder/JetFarbskala.png}
+	\caption{Jet Farbskala. Gutes Signal (links) zu schlechtem Signal (rechts)}
+	\label{skala}
+\end{figure}
+
+Als besonderer Punkt ist hier zu sehen, dass etwa in der Mitte des Flurs bei der Karte für das 2,4G Netz ein schlechtes Signal dargestellt wird, während es bei der 5G Karte vergleichsweise gut ist. Im Gegensatz dazu ist das Signal innerhalb des Robotik Labors oben links im Bild bei 2,4G besser ist als bei 5G. Als mögliche Erklärung kamen wir zu dem Schluss, dass 5G zwar eine größere Reichweite hat, von Wänden jedoch auch schneller abgeschwächt wird. So ist es nachvollziehbar, dass der Roboter auf dem Flur ein stärkeres Signal zu einem entfernten Router hat, jedoch in einem anderen Raum stärker abfällt, solange das WLAN Signal durch eine Wand muss.
 
 \newpage
 \section{Zusammenfassung}
+%Rauswerfen? Hätte ähnlichen Inhalt wie Ergebnisse
 
 \newpage
 \section{Ausblick}
-Die Datenerhebung funktioniert. Der nächste Schritt wäre, mit dem Roboter strukturiert ein Gebiet zu kartieren und eine Flächendeckende Abdeckung zu erstellen. Auch würde eine Lösung, mit der eine Heatmap in RVIZ oder direkt danach überlagert eingeblendet werden kann, die Nachbearbeitung deutlich vereinfachen.
+Die Datenerhebung funktioniert, jedoch kann man gerade in der Nachbearbeitung noch einiges verbessern. So wäre ein Lösung, bei der die Heatmap direkt in rviz angezeigt und dann auch zusammen exportiert werden. Es gibt Ansätze für ein Paket, was genau das können soll, jedoch war dieses zum Zeitpunkt des Projektes nicht lauffähig, weshalb wir einen eigenen Node geschrieben haben.
 
+Ein weiterer Punkt wäre ein Ansatz, mit dem der Roboter ein Gebiet strukturiert und selbstständig abfährt. So könnte man eine vorgefertigte Karte in Flächen einteilen und der Roboter muss in jeder Fläche mindestens einmal gewesen sein. So ist dann eine vollständige Abdeckung gewährleistet und es kann eine durchgängige Heatmap erstellt werden.
+
+Ob es möglich ist, dass der Roboter selbstständig ein Gebiet kartografiert, anschließend diese Karte in Abschnitte unterteilt und abfährt könnte auch getestet werden. Da moderne Saugroboter dies teilweise machen wäre es durchaus vorstellbar.
 
 \newpage
 % Literaturverzeichnis erzeugen
