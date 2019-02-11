@@ -13,7 +13,7 @@
                 % aktuellen Rechtschreiberegeln umgeschaltet.
                 % Alternativen und weitere Sprachen sind
                 % verfügbar (siehe <http://ctan.org/pkg/babel>).
-                
+
 \setlength{\parskip}{0.2cm}  % 2mm Abstand zwischen zwei Absätzen
 \setlength{\parindent}{0mm}  % Absätze nicht einziehen
 \usepackage[backend=biber,
@@ -25,7 +25,7 @@ hyperref=true,                  % Hyperlinks für Ziate
 style=ieee                     % Zitate als Zahlen [1]
 %style=alphabetic               % Zitate als Kürzel und Jahr [Ein05]
 %style=authoryear                % Zitate Author und Jahr [Einstein (1905)]
-]{biblatex} 
+]{biblatex}
 \addbibresource{literatur.bib}
 \setlength{\bibitemsep}{1em}     % Abstand zwischen den Literaturangaben
 \setlength{\bibhang}{2em}        % Einzug nach jeweils erster Zeile
@@ -93,16 +93,44 @@ Die Kommunikation zwischen Nodes, wie in  läuft über ein Publisher/Subscriber 
 \label{kartierung}
 Für die Kartierung bietet ROS das Package \textit{gmapping}, wenn die Karte mithilfe eines Lasermoduls erstellt werden soll. Dieses Package bietet die Funktionalität, um eine laserbasierte Karte mithilfe des Systems \textit{Simultaneous Localization and Mapping} (SLAM) zu erstellen. Hierbei wird eine 2D Karte aus der Kombination von den Laserdaten und der vermuteten eigenen Position erstellt. Die Daten über die eigene Position kommen aus den Odometriedaten, also der vermuteten Bewegungsrichtung und -distanz anhand der Bewegungen der Räder. Der Node \textit{slam\_gmapping} subscriped die Topics \textit{tf} und \textit{scan}, aus denen es dann die Karte berechnet und unter dem Topic map veröffentlicht. \cite{gmap}. Die Abschätzung des Drehwinkels um die eigene Achse durch Odometrie ist vergleichsweise ungenau, weshalb es zu fehlerhaften Karten kommen kann, wenn der Roboter während der Kartierung zu viele Kurven fährt. Der Abgleich mit den Laserdaten wirkt diesem Effekt entgegen, bei einem erneuten Abfahren des Bereiches können entstandene Verschiebungen erkannt und behoben werden.
 
+
 \subsection{Wireless Local Area Network}
-In dieser Sektion wird folgendes erklärt:
-\begin{itemize}
-	\item WLAN (Funkmodi, Standards, )
-	\item Kanäle 2,4 GHz und 5GHz
-	\item Messungen
-	\item RSSI-Wert
-	\item ...
-\end{itemize}
-% Zuständigkeit: Flo
+\subsubsection{IEEE 801.11}
+Der Begriff Wireless Local Area Network (WLAN) beschreibt drahtlose Netzwerkkommunikation in einem Lokalen Netzwerk mit einer Übertragung über die Luft. Hierzu gehören viele Standards, zum Beispiel auch die Datennetze, die Bluetooth verwendet. In dieser Arbeit soll es aber um den Standard IEEE 802.11 gehen, ab hier unter dem Begrif "WLAN" referenziert wird. IEEE 801.11 spezifiziert neben der Übertragung per Radiowellen noch die Übertragung per Infrarot, um die es hier aber nicht gehen soll. IEEE 802.11 im Detail die Kommunikation in Funknetzwerken. Dies entspricht der Bitübertragungsschicht im ISO-OSI Modell. Der Standard besteht aus mehreren Unternormen, die nach und nach eingeführt worden sind. Die Wichtigsten sind:  802.11, 802.11a, 802.11b, 802.11g, 802.11n, 802.11ac, 802.11ad. Bei WLAN werden heute hauptsächlich zwei Frequenzbänder genutzt. Das 2,4 GHz und das 5GHz Band. Die Tabelle \ref{wlanStandards} zeigt die verschiedenen Generationen, deren Erscheinungsjahr und die Frequenz auf der sie senden und empfangen.
+
+\begin{figure}[h]
+	\centering
+	\caption{Vergleich der WLAN Standards \cite{heiseWlan}}
+	\includegraphics[width=10cm]{bilder/heise-de-wlan-standards}
+	\newline
+	\label{wlanStandards}
+\end{figure}
+
+Die verschiedenen Frequenzbänder haben unterschiedliche Eigenschaften. Im Vergleich hat das 2.4GHz eine höhere Reichweite. Ein Nachteil des 2.4GHz-Bandes ist, dass sich hier auch andere Funkstandards tummeln. Oftmals ist das 2.4GHz-Band durch viele Geräte sehr überfüllt. Im Gegenzug dazu ermöglicht das 5GHz-Band schnellere Übertragungsraten und bietet größere Kanalbandbreiten. Die Reichweite von WLAN kann bis zu 100m betragen, ist aber typischerweise auf einen oder wenige Räume begrenzt. 
+Die Kommunikation zwischen zwei Teilnehmern in einem WLAN-Netz kann direkt im so genannten Ad-hoc-Modus oder im Infrastruktur-Modus mithilfe einer Basisstation auch Access-Point genannt erfolgen. Für uns hier relevant sind Verbindungen von mobilen Endgeräten zu Access-Points. Diese Basisstationen meistens mit den Routern des Netzwerkes verbunden. Somit kann eine Verbindung in das übergeordnete Netzwerk, zum Beispiel das Internet, erfolgen.
+
+\subsubsection{SSID}
+In der Hochschule Mannheim werden zum Bereitstellen eines flächendeckenden WLAN-Netzwerkes viele Basisstationen gleichzeitig eingesetzt. Um eine kontinuierliche Verbindung zu gewährleisten, auch bei sich bewegenden Mobilgeräten überlappen sich diese Bereich. 
+Zusätzlich werden pro Basisstation mehrere Netzwerke bereitgestellt. Diese unterscheiden sich in dem Namen des Netzwerkes der so genannten Service Set Identifier (SSID). Dieser Eindeutige Name kann im Access-Point eingestellt werden. 
+
+\subsubsection{Messen}
+
+\begin{figure}[h]
+	\centering
+	\caption{Messen der Signalstärke mit der Android App Wifi Analyzer}
+	\includegraphics[width=10cm]{bilder/wifianalyzer}
+	\newline
+	\label{wifiAnalyzer}
+\end{figure}
+
+Um die Erreichbarkeit eines WLANs zu gewährleisten lohnt es sich die Signalstärke zu messen. Die Signalstärke ist Indikator für Stärke des ein kommenden WLAN-Signals an der WLAN-Schnittstelle. Somit kann man feststellen ob eine Signal stark genug ist um eine stabile Verbindung zu gewährleisten. Ein anderer Begriff dafür ist  Received Signal Strength Indication oder auch RSSI-Wert. Gemessen wird sie in dBm, also die Dämpfung des signales. Je höher die Zahl, desto besser höher die Signalstärke. Unter Linux kann Signalstärke direkt  ausgelesen werden. Hierzu kann der Befehl "iwconfig" genutzt werden. Leider ist das Ergebnis stark von der verwendeten Hardware abhängig. Unter bestimmten Umständen wird nur ein Pseudowert ohne Einheit zurückgegeben.
+Im Bild \ref{wifiAnalyzer} sieht man ein Screenshot einer Android Applikation mit der man die Signalstärke umliegender WLAN-Netzwerke messen und Anzeigen kann. Auf der X-Achse sind die verschiedenen Kanäle des 2,4GHz Bandes zu sehen. Die Y-Achse stellt die Signalstärke dar. Die ovalen, farbigen Ausschläge sind jeweils ein Netzwerk beschriftet mit der jeweiligen SSID.
+
+Eine Andere Kenngröße ist die Verbindungsqualität, welche einer Pseudoeinstufung der Qualität der Verbindung entspricht. Diese wird aus mehreren Faktoren berechnet: Bitfehler, Übertragungsrate, Signalstärke, Synchronisationswerte und anderen Hardwaremetriken. Oftmals wird die Qualität als Bruch dargestellt. Beispiel: 41/70
+
+
+Weitere Informationen über WLAN unter \cite{elektronikKompWlan}, \cite{elektronikKompWlanFreq}, \cite{heiseWlan}
+
 
 \newpage
 \section{Problemstellung}
@@ -135,7 +163,7 @@ Als bestehende ROS Pakete wurden genutzt:
 Wie in Kapitel \ref{kartierung} bereits erwähnt dient das Paket \textit{gmapping} zur Erstellung einer 2D Karte aus einer Kombination von Informationen des Laserscanners und den Bewegungsdaten des Roboters. Diese Karte wird später als Grundlage verwendet, auf welcher dann die Heatmap erstellt wird.
 
 \paragraph{p2os}
-Das Paket \textit{p2os} enthält die Treiber und den Steuerungsnode für die Basis des für den Pioneer 3-DX. Er bildet die Schnittstelle zu der Hardware, wodurch wir uns damit nicht weiter auseinandersetzen müssen \cite{p2os}. 
+Das Paket \textit{p2os} enthält die Treiber und den Steuerungsnode für die Basis des für den Pioneer 3-DX. Er bildet die Schnittstelle zu der Hardware, wodurch wir uns damit nicht weiter auseinandersetzen müssen \cite{p2os}.
 
 \paragraph{p2os\_teleop}
 Um die Steuerung des Pioneer auch mit einem Gerät ansprechen zu können liefert das Paket \textit{p2os\_teleop} die Schnittstelle, um den Roboter auch mit einem Controller fahren zu können.
@@ -153,7 +181,7 @@ Auch war das Extrahieren der Signalstärken erwies sich als Problem.
 %Sollte Flo möglichst ausfüllen
 
 \subsection{Inbetriebnahme und Installation}
-% Alles veraltet. Vorhergehende Gruppe hat Docker ansazt gewält, nicht mehr lauffähig. Neues Betriebsystem. Neues ROS. Damit einige Probleme: Selbstcompilieren einiger Pakete nötig. 
+% Alles veraltet. Vorhergehende Gruppe hat Docker ansazt gewält, nicht mehr lauffähig. Neues Betriebsystem. Neues ROS. Damit einige Probleme: Selbstcompilieren einiger Pakete nötig.
 Wie bereits eingangs erwähnt wurde der Rechner des Roboters komplett neu gemacht. Damit das Betriebssystem möglichst lange laufen kann haben wir uns entschieden, Ubuntu 18.04 LTS zu installieren und darauf ROS Melodic aufzusetzen.
 
 Während der Installation von ROS ist uns aufgefallen, dass diese Version noch nicht fertig implementiert ist. Der Code ist auf GitHub veröffentlicht, also konnten wir uns die Pakete herunterladen und manuell kompilieren. Hierbei sind dann Fehler aufgetaucht, dass einzelne Dateien nicht gefunden wurden. Nach einiger dieser Fehlermeldungen ist uns aufgefallen, dass ganze Unterordner von einem Ordner in einen anderen geschoben wurden und daher die Verweise innerhalb des Codes nicht mehr stimmen. Nach dem Anpassen der Dateien auf den neuen Pfad konnten die Pakete dann kompiliert werden.
@@ -198,9 +226,6 @@ Es ist uns gelungen, die Signalstärke des WLANs aufzugreifen und auszuwerten. D
 
 Als besonderer Punkt ist hier zu sehen, dass etwa in der Mitte des Flurs bei der Karte für das 2,4G Netz ein schlechtes Signal dargestellt wird, während es bei der 5G Karte vergleichsweise gut ist. Im Gegensatz dazu ist das Signal innerhalb des Robotik Labors oben links im Bild bei 2,4G besser ist als bei 5G. Als mögliche Erklärung kamen wir zu dem Schluss, dass 5G zwar eine größere Reichweite hat, von Wänden jedoch auch schneller abgeschwächt wird. So ist es nachvollziehbar, dass der Roboter auf dem Flur ein stärkeres Signal zu einem entfernten Router hat, jedoch in einem anderen Raum stärker abfällt, solange das WLAN Signal durch eine Wand muss.
 
-\newpage
-\section{Zusammenfassung}
-%Rauswerfen? Hätte ähnlichen Inhalt wie Ergebnisse
 
 \newpage
 \section{Ausblick}
