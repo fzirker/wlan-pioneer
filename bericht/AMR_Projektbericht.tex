@@ -196,12 +196,16 @@ Um die Karte auch nachträglich erstellen zu können haben wir uns dazu entschie
 Die von gmapping bereitgestellten Informationen können in \textit{rviz} als Karte visualisert werden. Hierbei kann ausgewählt werden, welche Topics genau dargestellt werden sollen, da nicht alle laufenden Topics der Kartenerstellung dienen sondern auch beispielsweise Steuerungsfunktionen haben.
 
 \subsection{WLAN-Messung}
-% Zuständig:Flo
+Um die WLAN Abdeckung zu messen sollte die Signalstärke ausgelesen und auf einem neuen Topic kontinuierlich veröffentlicht werden. Dafür wurde ein WLAN-USB-Stick gekauft und am Roboter eingerichtet. Auf der Komandozeile kann man sich die Signalstärke mithilfe des iwconfig-Befehls ausgeben lassen. Da dies sehr einfach ist konnte schnell ein Knoten geschrieben werden, der das Ergebnis des Linux Kommandos abfängt und auf dem topic /wlanSignal ausgibt.
+
+
+\subsection{Nachverarbeitung}
+Es wurde ein Python-Skript geschrieben, welches die aufgezeichneten Rosbag-Dateien der Mess-Fahrten durchlief. Ziel war es eine CSV-Datei zu erhalten, die man im Nachgang plotten könnte. Das mit aufgezeichnete Topic /tf lieferte unter Zuhilfenahme der Transormation-API von ROS die transformierten genaue Position des Roboters. Die Transformation war nötig, da der Topic /pose nur die Position anhand der Odemetrie liefert, welche sehr ungenau ist. Die Transformations-Vektoren von /tf alleine sind auch nicht aussagekräftig, da sie nur die relative Verschiebung und der Drehwinkel liefern und nur durch kontinuierliches Integrieren und zusammen rechnen zu /pose die aktuelle Position liefern. Nachdem die CSV erstellt war konnte mit Matlab die Heatmap erzeugt und mittels Bildbearbeitung über die Karte gelegt werden.
 
 \newpage
 \section{Ergebnisse}
 %Was ist raus gekommen. Neue Erkenntnisse, Lösungen, Unsere zwei Karten.
-Es ist uns gelungen, die Signalstärke des WLANs aufzugreifen und auszuwerten. Desweiteren konnten wir die Signale auch auf einer parallel dazu erstellten Karte visualisieren. Zur Erstellung der Karten haben wir die Karte aus dem Map Server von ROS exportiert und eine CSV Datei erstellt, bei der pro Zeitpunkt ein Eintrag geschrieben wird mit den aktuellen Koordinaten des Roboters und der dazugehörigen Signalstärken. Aus dieser Datei wurden dann in Matlab zwei Schaubilder erstellt, eines für die Signalstärke des 2,4G Netzes als Farbskala und eines für die 5G Signalstärke. Als Farbskala haben wir uns für die Jet Skala entschieden, die auch in Abbildung \ref{skala} dargestellt ist.
+Es ist uns gelungen, die Signalstärke des WLANs aufzugreifen und auszuwerten. Des weiteren konnten wir die Signale auch auf einer parallel dazu erstellten Karte visualisieren. Zur Erstellung der Karten haben wir die Karte aus dem Map Server von ROS exportiert und eine CSV Datei erstellt, bei der pro Zeitpunkt ein Eintrag geschrieben wird mit den aktuellen Koordinaten des Roboters und der dazugehörigen Signalstärken. Aus dieser Datei wurden dann in Matlab zwei Schaubilder erstellt, eines für die Signalstärke des 2,4G Netzes als Farbskala und eines für die 5G Signalstärke. Als Farbskala haben wir uns für die Jet Skala entschieden, die auch in Abbildung \ref{skala} dargestellt ist.
 
 \begin{figure}[h!]
 	\centering
@@ -226,6 +230,8 @@ Es ist uns gelungen, die Signalstärke des WLANs aufzugreifen und auszuwerten. D
 
 Als besonderer Punkt ist hier zu sehen, dass etwa in der Mitte des Flurs bei der Karte für das 2,4G Netz ein schlechtes Signal dargestellt wird, während es bei der 5G Karte vergleichsweise gut ist. Im Gegensatz dazu ist das Signal innerhalb des Robotik Labors oben links im Bild bei 2,4G besser ist als bei 5G. Als mögliche Erklärung kamen wir zu dem Schluss, dass 5G zwar eine größere Reichweite hat, von Wänden jedoch auch schneller abgeschwächt wird. So ist es nachvollziehbar, dass der Roboter auf dem Flur ein stärkeres Signal zu einem entfernten Router hat, jedoch in einem anderen Raum stärker abfällt, solange das WLAN Signal durch eine Wand muss.
 
+\subsubsection{Quellcode}
+Alle Programmierten Ergebnisse unseres Projektes können in unserem öffentlichen Repository auf Github.com eingesehen werden: \href{https://github.com/fzirker/wlan_pioneer}{Link zum wlan\_pioneer}
 
 \newpage
 \section{Ausblick}
