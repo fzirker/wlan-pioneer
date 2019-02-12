@@ -117,7 +117,7 @@ Zusätzlich werden pro Basisstation mehrere Netzwerke bereitgestellt. Diese unte
 
 \begin{figure}[h]
 	\centering
-	\caption{Messen der Signalstärke mit der Android App Wifi Analyzer}
+	\caption{Messen der Signalstärke mit der Android App Wifi Analyzer (Die Netzwerknamen wurden unkenntlich gemacht)}
 	\includegraphics[width=10cm]{bilder/wifianalyzer}
 	\newline
 	\label{wifiAnalyzer}
@@ -196,17 +196,13 @@ Um die Karte auch nachträglich erstellen zu können haben wir uns dazu entschie
 Die von gmapping bereitgestellten Informationen können in \textit{rviz} als Karte visualisert werden. Hierbei kann ausgewählt werden, welche Topics genau dargestellt werden sollen, da nicht alle laufenden Topics der Kartenerstellung dienen sondern auch beispielsweise Steuerungsfunktionen haben.
 
 \subsection{WLAN-Messung}
-Um die WLAN Abdeckung zu messen sollte die Signalstärke ausgelesen und auf einem neuen Topic kontinuierlich veröffentlicht werden. Dafür wurde ein WLAN-USB-Stick gekauft und am Roboter eingerichtet. Auf der Kommandozeile kann man sich die Signalstärke mithilfe des iwconfig-Befehls ausgeben lassen. Da dies sehr einfach ist konnte schnell ein Knoten geschrieben werden, der das Ergebnis des Linux Kommandos abfängt und auf dem Topic /wlanSignal ausgibt.
+Um die WLAN Abdeckung zu messen sollte die Signalstärke ausgelesen und auf einem neuen Topic kontinuierlich veröffentlicht werden. Dafür wurde ein WLAN-USB-Stick gekauft und am Roboter eingerichtet. Auf der Kommandozeile in Linux kann man sich die Signalstärke mithilfe des iwconfig-Befehls sehr leicht ausgeben lassen. Es wurde über die Betriebsystemoberfläche eine Verbindung mit dem zu überwachenden WLAN-Netzwerk hergestellt. So konnte schnell ein Knoten geschrieben werden, der das Ergebnis des Linux Kommandos abfängt und auf dem Topic /wlanSignal ausgibt. Hierfür wurde eine eigene Nachricht im ROS-Message-Format geschrieben.
 
+Da die Frequenzbänder unterschiedliche Eigenschaften haben wurde entschieden, jeweils eine Messung für das 2,4GHz-Band und das 5GHz-Band zu machen und getrennt auszugeben um später differenzierte Ergebnisse zu erhalten. Die Idee war zwei Netzwerkadapter anzusprechen und jeden über die Betriebssystemkonfiguration in ein separates Band zu hängen. Dies erwies sich aber als schwierig, da dies im WLAN-Standard so nicht vorgesehen ist. Für die neuen Modi, zum Beispiel IEEE 802.11n, müssen die WLAN-Karten auf beiden Bändern senden und empfangen können, da auch Dual-Chanel-Kommunikation möglich ist. Somit existiert keine Möglichkeit über das Betriebssystem ein Netzwerk-Interface ausschließlich auf ein Band zu konfigurieren. Außerdem war es problematisch, dass immer eine Verbindung zum Netzwerk vorhanden sein musste. Dies führte bei einem Wechsel der Basisstation, durch etwaiges Bewegen entlang der Flure, dazu, dass die kurze Aussetzer der Messung in der Messung auftraten. 
 
-Topic /wlanSignal mit eigener Message
-2,4 und 5G getrennt
-erst Linux
-Problem dass Verbindung nötig war
-dann Scanning mit Bibliotek
-Anpassung der Bibiothek nötig
-Topic /wlan
+Um die im Vorherigen Absatz genannten Probleme zu Lösen haben wir unsere Messung auf einen passiven Scanmodus umgestellt. Das bedeutet, dass man feste Verbindung mehr zu einem Netzwerk hat. Sondern Alle WLAN-Basisstationen in Reichweite mit deren Eigenschaften ausliest. Das können auch mehre pro Netzwerk sein. Da dies nicht mehr komfortabel über die Kommandozeile zu Realisieren ist, ohne Performanceverluste hin zunehmen, nutzten wir eine C++-Bibliothek Namens wifi-scan \cite{bmegliWifiScan}. Diese macht es möglich relativ einfach WLAN-Netzwerke auf einer bestimmten Netzwerkschnittstelle zu scannen. Nachdem diese noch geringfügig angepasst war, konnte eine Liste Aller Access-Points in der Umgebung mit deren Eigenschaften (SSID, Signalstärke und Frequenz) ermittelt werden. Diese Liste konnte dann nach der gesuchten SSID gefiltert und die aktuelle und maximale Signalstärke pro Band gefunden werden. Ein kleiner Nachteil dieser Lösung ist, dass der Knoten nun Administrationsrechte benötigt um den Scan durchzuführen. Dies wurde durch die  Abfrage des Root-Passwortes beim Start des Knotens erledigt. 
 
+% Hier kommt noch ein Bild rein wo man den rqt_graph für einen Scan sieht. 
 
 
 \subsection{Nachverarbeitung}
