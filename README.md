@@ -18,4 +18,4 @@ This is a project for the lecture Autonomous Mobile Robots (AMR) at [Hochschule 
  - [P2os driver](http://wiki.ros.org/p2os-purdue) ([code from here](https://github.com/allenh1/p2os))
  - [slam_gmapping](http://wiki.ros.org/slam_gmapping) ([code from here](https://github.com/ros-perception/slam_gmapping))
  - [openslam_gmapping](http://wiki.ros.org/openslam_gmapping) ([code from here](https://github.com/ros-perception/openslam_gmapping)))
- - [wifi-scan library](https://github.com/fzirker/wifi-scan)
+ - [wifi-scan library](https://github.com/bmegli/wifi-scan)
